@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSD AI Foundation Training</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  * { font-family: 'IBM Plex Sans Thai', sans-serif; }
+  code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --success: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a5f 100%);
+  }
+
+  .card-hover { transition: all 0.2s ease; }
+  .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+
+  .token { display: inline-block; padding: 2px 6px; border-radius: 4px; margin: 1px; font-size: 0.8rem; }
+
+  .progress-bar { transition: width 0.5s ease; }
+
+  .shake { animation: shake 0.4s ease; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+
+  .pop { animation: pop 0.3s ease; }
+  @keyframes pop {
+    0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)}
+  }
+
+  .fade-in { animation: fadeIn 0.4s ease forwards; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  .typing::after {
+    content: '|';
+    animation: blink 0.8s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .skill-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3);
+    border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; color: #818cf8;
+  }
+
+  .lab-card {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #6366f1, #06b6d4) border-box;
+  }
+
+  .quiz-option {
+    cursor: pointer; transition: all 0.15s ease;
+    border: 2px solid #e2e8f0;
+  }
+  .quiz-option:hover { border-color: #6366f1; background: #f5f3ff; }
+  .quiz-option.correct { border-color: #10b981 !important; background: #f0fdf4 !important; }
+  .quiz-option.wrong { border-color: #ef4444 !important; background: #fef2f2 !important; }
+  .quiz-option.selected { border-color: #6366f1; background: #f5f3ff; }
+  .quiz-option.disabled { pointer-events: none; }
+
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.92);
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .module-section { scroll-margin-top: 80px; }
+
+  /* Syntax highlight */
+  .kw { color: #7c3aed; font-weight: 600; }
+  .str { color: #047857; }
+  .cmt { color: #94a3b8; font-style: italic; }
+  .fn { color: #1d4ed8; }
+  .err-line { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; }
+  .ok-line { background: rgba(16,185,129,0.08); border-left: 3px solid #10b981; }
+
+  .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+</style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ───────── STICKY NAV ───────── -->
+<nav class="sticky-nav shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">AI</div>
+      <span class="font-semibold text-gray-700">SSD AI Training</span>
+    </div>
+    <div class="flex items-center gap-1 text-sm">
+      <a href="#module1" class="px-3 py-1.5 rounded-lg hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition">1 • พื้นฐาน</a>
+      <a href="#module2" class="px-3 py-1.5 rounded-lg hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition">2 • Skills</a>
+      <a href="#module3" class="px-3 py-1.5 rounded-lg hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition">3 • Labs</a>
+    </div>
+    <div class="flex items-center gap-2 text-sm">
+      <span class="text-gray-500">คะแนน</span>
+      <span id="totalScore" class="font-bold text-indigo-600 text-lg">0</span>
+      <span class="text-gray-400">/ 100</span>
+    </div>
+  </div>
+  <!-- Overall progress bar -->
+  <div class="h-1 bg-gray-100">
+    <div id="overallProgress" class="progress-bar h-1 bg-gradient-to-r from-indigo-500 to-cyan-500" style="width:0%"></div>
+  </div>
+</nav>
+
+<!-- ───────── HERO ───────── -->
+<header class="gradient-hero text-white py-20 px-4">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-6">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      SSD Team AI Workshop
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+      ทำงานกับ AI<br>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300">อย่างได้ผลจริง</span>
+    </h1>
+    <p class="text-lg text-indigo-200 mb-8 max-w-2xl mx-auto">
+      เรียนรู้ว่า AI ทำงานยังไง เข้าใจ SSD Skills 22 ตัว
+      และฝึกจริงผ่าน Labs เพื่อนำไปใช้ในงานประจำวันได้ทันที
+    </p>
+    <div class="flex flex-wrap justify-center gap-4 mb-10">
+      <div class="bg-white/10 rounded-xl px-5 py-3 text-center">
+        <div class="text-2xl font-bold">3</div>
+        <div class="text-sm text-indigo-200">Modules</div>
+      </div>
+      <div class="bg-white/10 rounded-xl px-5 py-3 text-center">
+        <div class="text-2xl font-bold">5</div>
+        <div class="text-sm text-indigo-200">Labs</div>
+      </div>
+      <div class="bg-white/10 rounded-xl px-5 py-3 text-center">
+        <div class="text-2xl font-bold">22</div>
+        <div class="text-sm text-indigo-200">SSD Skills</div>
+      </div>
+      <div class="bg-white/10 rounded-xl px-5 py-3 text-center">
+        <div class="text-2xl font-bold">~90</div>
+        <div class="text-sm text-indigo-200">นาที</div>
+      </div>
+    </div>
+    <a href="#module1" class="inline-block bg-white text-indigo-700 font-semibold px-8 py-3 rounded-xl hover:bg-indigo-50 transition shadow-lg">
+      เริ่มเลย →
+    </a>
+  </div>
+</header>
+
+<!-- ───────── MODULE 1: AI FOUNDATION ───────── -->
+<section id="module1" class="module-section py-16 px-4">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">1</div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">AI Foundation</h2>
+        <p class="text-gray-500 text-sm">เข้าใจว่า LLM คืออะไร และ Prompt ทำงานยังไง</p>
+      </div>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="grid md:grid-cols-3 gap-5 mb-10">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 card-hover">
+        <div class="text-3xl mb-3">🧠</div>
+        <h3 class="font-semibold mb-2">LLM คืออะไร?</h3>
+        <p class="text-sm text-gray-600">Large Language Model — โมเดลที่ฝึกบนข้อความปริมาณมหาศาล เรียนรู้รูปแบบภาษาจนสามารถสร้างข้อความที่ "สมเหตุสมผล" ต่อไปได้</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 card-hover">
+        <div class="text-3xl mb-3">🎯</div>
+        <h3 class="font-semibold mb-2">Token คืออะไร?</h3>
+        <p class="text-sm text-gray-600">AI ไม่อ่านทีละตัวอักษร แต่อ่านทีละ "token" ซึ่งอาจเป็นคำ, ส่วนของคำ, หรือเครื่องหมาย — ขีดจำกัดการจำของ AI วัดเป็น tokens</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 card-hover">
+        <div class="text-3xl mb-3">💬</div>
+        <h3 class="font-semibold mb-2">Context Window</h3>
+        <p class="text-sm text-gray-600">ช่วง "หน่วยความจำ" ที่ AI อ่านได้ในครั้งเดียว ยิ่งใส่ context ที่ดี ยิ่งตอบได้ตรงมากขึ้น</p>
+      </div>
+    </div>
+
+    <!-- Token Visualizer -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+      <h3 class="font-semibold mb-1">🔬 Token Visualizer</h3>
+      <p class="text-sm text-gray-500 mb-4">ลองพิมพ์ข้อความ แล้วดูว่า AI แบ่งมันเป็น token ยังไง</p>
+      <input id="tokenInput" type="text" placeholder="ลองพิมพ์: เขียน unit test สำหรับ OrderService"
+        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+        oninput="visualizeTokens(this.value)">
+      <div id="tokenOutput" class="flex flex-wrap gap-1 min-h-8 p-2 bg-gray-50 rounded-xl text-sm">
+        <span class="text-gray-400 text-xs">→ tokens จะปรากฏที่นี่</span>
+      </div>
+      <div class="flex items-center gap-4 mt-3 text-xs text-gray-500">
+        <span>Token count: <strong id="tokenCount">0</strong></span>
+        <span class="flex items-center gap-1"><span class="token bg-purple-100 text-purple-700">word</span> คำเต็ม</span>
+        <span class="flex items-center gap-1"><span class="token bg-blue-100 text-blue-700">sub</span> ส่วนของคำ</span>
+        <span class="flex items-center gap-1"><span class="token bg-green-100 text-green-700">sym</span> เครื่องหมาย</span>
+      </div>
+    </div>
+
+    <!-- How LLM works visual -->
+    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 mb-8">
+      <h3 class="font-semibold mb-4">🔄 วิธี LLM ทำงาน (แบบเข้าใจง่าย)</h3>
+      <div class="flex flex-col md:flex-row items-center gap-4 text-sm">
+        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
+          <div class="text-2xl mb-2">📝</div>
+          <div class="font-medium">1. รับ Prompt</div>
+          <div class="text-gray-500 text-xs mt-1">"เขียน function login"</div>
+        </div>
+        <div class="text-2xl text-indigo-300">→</div>
+        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
+          <div class="text-2xl mb-2">⚙️</div>
+          <div class="font-medium">2. ประมวลผล</div>
+          <div class="text-gray-500 text-xs mt-1">วิเคราะห์ pattern จาก training data</div>
+        </div>
+        <div class="text-2xl text-indigo-300">→</div>
+        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
+          <div class="text-2xl mb-2">🎲</div>
+          <div class="font-medium">3. เลือก Token</div>
+          <div class="text-gray-500 text-xs mt-1">คำนวณ probability ของ token ถัดไป</div>
+        </div>
+        <div class="text-2xl text-indigo-300">→</div>
+        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
+          <div class="text-2xl mb-2">💡</div>
+          <div class="font-medium">4. Output</div>
+          <div class="text-gray-500 text-xs mt-1">สร้าง code ทีละ token</div>
+        </div>
+      </div>
+      <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+        <strong>💡 Key Insight:</strong> AI ไม่ได้ "รู้" — มันทำนาย token ที่น่าจะตามมา ดังนั้น <strong>Prompt ที่ดี = Context ที่ชัด = ผลลัพธ์ที่ดี</strong>
+      </div>
+    </div>
+
+    <!-- Prompt Anatomy -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+      <h3 class="font-semibold mb-4">🏗️ Anatomy ของ Prompt ที่ดี</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">✗</span>
+            <span class="text-sm font-medium text-red-600">Prompt ที่ไม่ดี</span>
+          </div>
+          <div class="bg-red-50 border border-red-100 rounded-xl p-4 mono text-sm text-gray-700">
+            "ช่วย review code หน่อย"
+          </div>
+          <p class="text-xs text-gray-500 mt-2">❌ ไม่มีบริบท ไม่รู้ว่า code อะไร มาตรฐานไหน ต้องการอะไร</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">✓</span>
+            <span class="text-sm font-medium text-green-600">Prompt ที่ดี</span>
+          </div>
+          <div class="bg-green-50 border border-green-100 rounded-xl p-4 mono text-sm text-gray-700">
+            <span class="text-purple-600">[บริบท]</span> ฉันเป็น dev SSD ทำงานกับ React/TS<br>
+            <span class="text-blue-600">[สิ่งที่ต้องการ]</span> review OrderForm.tsx<br>
+            <span class="text-green-600">[มาตรฐาน]</span> ตาม SSD standard: ใช้ Formik, ห้าม any<br>
+            <span class="text-orange-600">[output]</span> รายงาน violations พร้อม line number
+          </div>
+          <p class="text-xs text-gray-500 mt-2">✅ ชัดเจน มีบริบท มีเป้าหมาย มีมาตรฐานอ้างอิง</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LAB 1: Prompt Quality Simulator ── -->
+    <div class="lab-card bg-white rounded-2xl p-6 shadow-sm mb-4">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">LAB 1</span>
+        <h3 class="font-semibold">Prompt Quality Simulator</h3>
+        <span class="ml-auto text-xs text-gray-400">+10 คะแนน</span>
+      </div>
+      <p class="text-sm text-gray-600 mb-5">เลือก scenario แล้วปรับปรุง prompt ให้ดีขึ้น — ดู AI response ที่เปลี่ยนไป</p>
+
+      <!-- Scenario selector -->
+      <div class="flex gap-2 mb-4 flex-wrap">
+        <button onclick="selectScenario(0)" id="scen0" class="scenario-btn px-4 py-2 rounded-lg text-sm border-2 border-indigo-500 bg-indigo-50 text-indigo-700 font-medium">
+          📝 Review Code
+        </button>
+        <button onclick="selectScenario(1)" id="scen1" class="scenario-btn px-4 py-2 rounded-lg text-sm border-2 border-gray-200 text-gray-600">
+          🐛 Fix Bug
+        </button>
+        <button onclick="selectScenario(2)" id="scen2" class="scenario-btn px-4 py-2 rounded-lg text-sm border-2 border-gray-200 text-gray-600">
+          📊 Explain Code
+        </button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <!-- Left: Prompt editor -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium">✍️ พิมพ์ prompt ของคุณ</label>
+            <div class="flex items-center gap-1.5">
+              <div id="qualityDots" class="flex gap-1">
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-200"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-200"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-200"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-200"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-200"></div>
+              </div>
+              <span id="qualityLabel" class="text-xs text-gray-400">quality</span>
+            </div>
+          </div>
+          <textarea id="promptInput" rows="5"
+            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"
+            placeholder="พิมพ์ prompt ที่นี่..."
+            oninput="analyzePrompt()"></textarea>
+          <div class="mt-2 space-y-1" id="promptHints"></div>
+          <button onclick="runSimulator()" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition text-sm">
+            ▶ จำลอง AI Response
+          </button>
+        </div>
+
+        <!-- Right: Simulated response -->
+        <div>
+          <label class="text-sm font-medium mb-2 block">🤖 AI Response (จำลอง)</label>
+          <div id="aiResponse" class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm min-h-32 text-gray-500">
+            กด "จำลอง AI Response" เพื่อดูผลลัพธ์
+          </div>
+          <div id="lab1Result" class="mt-2"></div>
+        </div>
+      </div>
+    </div>
+    <div id="lab1Score" class="text-sm text-gray-500 text-right mb-10"></div>
+
+  </div>
+</section>
+
+<!-- ───────── MODULE 2: SSD SKILLS ───────── -->
+<section id="module2" class="module-section py-16 px-4 bg-white">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold">2</div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">SSD Skills Ecosystem</h2>
+        <p class="text-gray-500 text-sm">22 skills ที่ทีม SSD สร้างขึ้น — แต่ละตัวทำอะไรและใช้เมื่อไหร่</p>
+      </div>
+    </div>
+
+    <!-- What is a skill -->
+    <div class="bg-purple-50 border border-purple-100 rounded-2xl p-6 mb-8">
+      <h3 class="font-semibold mb-3">🎯 Skill คืออะไร?</h3>
+      <div class="grid md:grid-cols-2 gap-6 text-sm">
+        <div>
+          <p class="text-gray-700 mb-3">
+            Skill คือ <strong>"คู่มือ + context พิเศษ"</strong> ที่ AI agent อ่านก่อนทำงาน
+            เหมือนการส่ง SRS ให้ developer อ่านก่อน code
+          </p>
+          <p class="text-gray-700">
+            เมื่อ AI เห็น trigger ที่ตรง (เช่น "review C# controller")
+            มันจะ activate skill ที่เกี่ยวข้องและทำงานตาม standard ของ SSD
+          </p>
+        </div>
+        <div class="bg-white rounded-xl p-4 border border-purple-100">
+          <div class="mono text-xs space-y-1">
+            <div class="text-purple-600 font-semibold">--- frontmatter ---</div>
+            <div><span class="text-blue-600">name:</span> ssd-backend-review</div>
+            <div><span class="text-blue-600">description:</span> <span class="text-green-700">ใช้เมื่อ...</span></div>
+            <div class="text-purple-600 font-semibold">---</div>
+            <div class="text-gray-500"># บริบท</div>
+            <div class="text-gray-500"># กฎหลัก</div>
+            <div class="text-gray-500"># ขั้นตอน + checklist</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills grid by category -->
+    <h3 class="font-semibold mb-4">📦 22 Skills ตาม Category</h3>
+
+    <!-- Frontend -->
+    <div class="mb-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="bg-cyan-100 text-cyan-700 text-xs font-bold px-3 py-1 rounded-full">⚛️ Frontend (React/TS)</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('frontend-setup')">
+          <div class="font-medium text-gray-700">ssd-frontend-setup</div>
+          <div class="text-xs text-gray-400 mt-0.5">Project setup, naming, structure</div>
+        </div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('react-component')">
+          <div class="font-medium text-gray-700">ssd-react-component</div>
+          <div class="text-xs text-gray-400 mt-0.5">Component patterns, Props</div>
+        </div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('react-form')">
+          <div class="font-medium text-gray-700">ssd-react-form</div>
+          <div class="text-xs text-gray-400 mt-0.5">Formik + Yup validation</div>
+        </div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('react-state')">
+          <div class="font-medium text-gray-700">ssd-react-state</div>
+          <div class="text-xs text-gray-400 mt-0.5">Redux Toolkit, createSlice</div>
+        </div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('react-api')">
+          <div class="font-medium text-gray-700">ssd-react-api</div>
+          <div class="text-xs text-gray-400 mt-0.5">Axios, React Query, NSwag</div>
+        </div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('frontend-review')">
+          <div class="font-medium text-gray-700">ssd-frontend-review</div>
+          <div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review violations</div>
+        </div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-cyan-300 transition cursor-pointer" onclick="showSkillDetail('frontend-refactor')">
+          <div class="font-medium text-gray-700">ssd-frontend-refactor</div>
+          <div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + tsc</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backend -->
+    <div class="mb-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">🔷 Backend (.NET/C#)</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-backend-setup</div><div class="text-xs text-gray-400 mt-0.5">VS2022, EF Core, folder structure</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-dotnet-controller</div><div class="text-xs text-gray-400 mt-0.5">Route, HTTP methods, auth</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-dotnet-service</div><div class="text-xs text-gray-400 mt-0.5">Service, DTO, AutoMapper</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-dotnet-infra</div><div class="text-xs text-gray-400 mt-0.5">Serilog, Quartz, RestSharp</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-backend-review</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review .cs violations</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-backend-refactor</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + build</div></div>
+      </div>
+    </div>
+
+    <!-- Python -->
+    <div class="mb-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">🐍 Python (FastAPI)</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition"><div class="font-medium text-gray-700">ssd-python-starter</div><div class="text-xs text-gray-400 mt-0.5">Clone template, create context</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition"><div class="font-medium text-gray-700">ssd-python-review</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review .py violations</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition"><div class="font-medium text-gray-700">ssd-python-refactor</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + pytest</div></div>
+      </div>
+    </div>
+
+    <!-- Database + Git + Other -->
+    <div class="grid md:grid-cols-2 gap-4 mb-8">
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">🗄️ Database + Git</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-database</div><div class="text-xs text-gray-400 mt-0.5">SQL naming, EF Core</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-git-commit</div><div class="text-xs text-gray-400 mt-0.5">Conventional Commits</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-git-flow</div><div class="text-xs text-gray-400 mt-0.5">Git Flow, branch naming</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full">🐛 Bug Fix + Tools</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-bug-std-auth-redirect-loop</div><div class="text-xs text-gray-400 mt-0.5">Auth redirect fix</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-bug-std-version-checker</div><div class="text-xs text-gray-400 mt-0.5">Cache/version fix</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-contact-skill-gen</div><div class="text-xs text-gray-400 mt-0.5">Generate contact skills</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LAB 2: Skill Selector Quiz ── -->
+    <div class="lab-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full">LAB 2</span>
+        <h3 class="font-semibold">Skill Selector Quiz</h3>
+        <span class="ml-auto text-xs text-gray-400">+20 คะแนน</span>
+      </div>
+      <p class="text-sm text-gray-600 mb-5">อ่าน scenario แล้วเลือก skill ที่ AI agent ควร activate</p>
+
+      <div id="quizContainer">
+        <!-- Quiz rendered by JS -->
+      </div>
+
+      <div id="quizResult" class="mt-4 hidden">
+        <div class="bg-gray-50 rounded-xl p-4 text-center">
+          <div class="text-3xl mb-2" id="quizEmoji">🎉</div>
+          <div class="font-semibold" id="quizScoreText"></div>
+          <div class="text-sm text-gray-500 mt-1" id="quizFeedback"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ───────── MODULE 3: HANDS-ON LABS ───────── -->
+<section id="module3" class="module-section py-16 px-4">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">3</div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Hands-On Labs</h2>
+        <p class="text-gray-500 text-sm">ฝึกทักษะจริงผ่าน interactive exercises</p>
+      </div>
+    </div>
+
+    <!-- ── LAB 3: Code Review Challenge ── -->
+    <div class="lab-card bg-white rounded-2xl p-6 shadow-sm mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">LAB 3</span>
+        <h3 class="font-semibold">Code Review Challenge</h3>
+        <span class="ml-auto text-xs text-gray-400">+25 คะแนน</span>
+      </div>
+      <p class="text-sm text-gray-600 mb-4">Code นี้มี violations ซ่อนอยู่ — ติ๊กทุก violation ที่คุณเจอแล้วกด Submit</p>
+
+      <div class="bg-gray-900 rounded-xl p-4 text-sm mono mb-4 overflow-x-auto leading-relaxed" id="codeDisplay">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div id="violationChecks" class="grid md:grid-cols-2 gap-2 mb-4">
+        <!-- Rendered by JS -->
+      </div>
+
+      <button onclick="submitCodeReview()"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-6 rounded-xl transition text-sm">
+        ✓ ส่งคำตอบ
+      </button>
+
+      <div id="reviewResult" class="mt-4"></div>
+    </div>
+
+    <!-- ── LAB 4: Commit Message Builder ── -->
+    <div class="lab-card bg-white rounded-2xl p-6 shadow-sm mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">LAB 4</span>
+        <h3 class="font-semibold">Commit Message Builder</h3>
+        <span class="ml-auto text-xs text-gray-400">+20 คะแนน</span>
+      </div>
+      <p class="text-sm text-gray-600 mb-5">เลือก scenario แล้วสร้าง commit message ที่ถูก Conventional Commits</p>
+
+      <!-- Scenario tabs -->
+      <div class="flex gap-2 mb-5 flex-wrap">
+        <button onclick="selectCommitScenario(0)" id="cs0" class="commit-scene-btn px-3 py-1.5 rounded-lg text-xs border-2 border-indigo-400 bg-indigo-50 text-indigo-700 font-medium">
+          เพิ่ม feature login
+        </button>
+        <button onclick="selectCommitScenario(1)" id="cs1" class="commit-scene-btn px-3 py-1.5 rounded-lg text-xs border-2 border-gray-200 text-gray-500">
+          แก้ bug ใน payment
+        </button>
+        <button onclick="selectCommitScenario(2)" id="cs2" class="commit-scene-btn px-3 py-1.5 rounded-lg text-xs border-2 border-gray-200 text-gray-500">
+          อัปเดต README
+        </button>
+        <button onclick="selectCommitScenario(3)" id="cs3" class="commit-scene-btn px-3 py-1.5 rounded-lg text-xs border-2 border-gray-200 text-gray-500">
+          refactor order service
+        </button>
+      </div>
+
+      <div class="bg-indigo-50 rounded-xl p-4 mb-4 text-sm" id="commitScenarioText">
+        <!-- Scenario description -->
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label class="text-xs font-medium text-gray-600 mb-1.5 block">Type *</label>
+          <select id="commitType" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" onchange="updateCommitPreview()">
+            <option value="">เลือก type...</option>
+            <option value="feat">feat</option>
+            <option value="fix">fix</option>
+            <option value="docs">docs</option>
+            <option value="style">style</option>
+            <option value="refactor">refactor</option>
+            <option value="perf">perf</option>
+            <option value="test">test</option>
+            <option value="chore">chore</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-gray-600 mb-1.5 block">Scope (ไม่บังคับ)</label>
+          <select id="commitScope" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" onchange="updateCommitPreview()">
+            <option value="">ไม่มี scope</option>
+            <option value="service">service</option>
+            <option value="controller">controller</option>
+            <option value="model">model</option>
+            <option value="redux">redux</option>
+            <option value="api">api</option>
+            <option value="config">config</option>
+            <option value="deps">deps</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-gray-600 mb-1.5 block">Breaking Change</label>
+          <div class="flex items-center gap-2 mt-2">
+            <input type="checkbox" id="breakingChange" class="rounded" onchange="updateCommitPreview()">
+            <span class="text-sm text-gray-600">มี breaking change (!)</span>
+          </div>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-xs font-medium text-gray-600 mb-1.5 block">Description * (imperative, max 50 chars)</label>
+        <input type="text" id="commitDesc" maxlength="70"
+          class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          placeholder="เช่น: add login controller"
+          oninput="updateCommitPreview()">
+        <div class="text-xs text-gray-400 mt-1">
+          <span id="descCount">0</span>/50 chars
+          <span id="descWarning" class="text-amber-500 ml-2 hidden">⚠️ เกิน 50 chars</span>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="bg-gray-900 rounded-xl p-4 mb-4 mono">
+        <div class="text-gray-400 text-xs mb-1">Preview:</div>
+        <div id="commitPreview" class="text-green-400 text-sm">_</div>
+      </div>
+
+      <button onclick="validateCommit()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-xl transition text-sm">
+        ✓ ตรวจสอบ Commit Message
+      </button>
+      <div id="commitResult" class="mt-4"></div>
+    </div>
+
+    <!-- ── LAB 5: Git Branch Naming ── -->
+    <div class="lab-card bg-white rounded-2xl p-6 shadow-sm mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">LAB 5</span>
+        <h3 class="font-semibold">Git Branch Naming Challenge</h3>
+        <span class="ml-auto text-xs text-gray-400">+25 คะแนน</span>
+      </div>
+      <p class="text-sm text-gray-600 mb-5">อ่าน scenario แล้วพิมพ์ชื่อ branch ที่ถูก SSD convention</p>
+
+      <div id="branchQuiz">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ───────── COMPLETION ───────── -->
+<section id="completion" class="py-16 px-4 bg-gradient-to-br from-indigo-900 to-purple-900 text-white hidden">
+  <div class="max-w-2xl mx-auto text-center">
+    <div class="text-6xl mb-4">🏆</div>
+    <h2 class="text-3xl font-bold mb-2">ยินดีด้วย!</h2>
+    <p class="text-indigo-200 mb-6">คุณผ่าน SSD AI Foundation Training แล้ว</p>
+    <div class="bg-white/10 rounded-2xl p-6 mb-8 inline-block">
+      <div class="text-5xl font-bold mb-1" id="finalScore">0</div>
+      <div class="text-indigo-200">คะแนนรวม / 100</div>
+    </div>
+    <div id="completionMessage" class="text-lg mb-8"></div>
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-left text-sm">
+      <div class="font-semibold mb-3">📌 Next Steps — นำไปใช้จริง</div>
+      <div class="space-y-2 text-indigo-200">
+        <div>1. ลอง activate skill ใน AI agent ของคุณ (Claude, Cursor, etc.)</div>
+        <div>2. รัน <span class="mono bg-white/10 px-1.5 py-0.5 rounded text-white">npx skills add</span> ติดตั้ง SSD skills</div>
+        <div>3. ใช้ ssd-code-review ก่อน PR ครั้งถัดไป</div>
+        <div>4. ถ้าเจอ bug ใหม่ — สร้าง ssd-bug-std-* skill ใหม่</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──── Skill Detail Modal ──── -->
+<div id="skillModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal(event)">
+  <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="modalTitle" class="font-bold text-lg"></h3>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+    </div>
+    <div id="modalContent" class="text-sm text-gray-700 space-y-2"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  score: 0,
+  maxScore: 100,
+  lab1Done: false,
+  lab2Done: false,
+  lab3Done: false,
+  lab4Done: false,
+  lab5Done: false,
+  currentScenario: 0,
+  currentCommitScenario: 0,
+  quizIndex: 0,
+  quizScore: 0,
+  quizAnswered: [],
+  branchIndex: 0,
+  branchScore: 0,
+  commitAttempts: 0,
+};
+
+function addScore(pts) {
+  state.score = Math.min(state.score + pts, state.maxScore);
+  document.getElementById('totalScore').textContent = state.score;
+  document.getElementById('totalScore').classList.add('pop');
+  setTimeout(() => document.getElementById('totalScore').classList.remove('pop'), 300);
+  updateOverallProgress();
+  if (state.score >= 80 && state.lab1Done && state.lab2Done && state.lab3Done && state.lab4Done && state.lab5Done) {
+    setTimeout(showCompletion, 500);
+  }
+}
+
+function updateOverallProgress() {
+  const pct = (state.score / state.maxScore) * 100;
+  document.getElementById('overallProgress').style.width = pct + '%';
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOKEN VISUALIZER
+// ═══════════════════════════════════════════════════════
+const tokenColors = [
+  ['bg-purple-100','text-purple-700'], ['bg-blue-100','text-blue-700'],
+  ['bg-cyan-100','text-cyan-700'], ['bg-green-100','text-green-700'],
+  ['bg-yellow-100','text-yellow-700'], ['bg-orange-100','text-orange-700'],
+  ['bg-pink-100','text-pink-700'],
+];
+
+function visualizeTokens(text) {
+  const out = document.getElementById('tokenOutput');
+  const cnt = document.getElementById('tokenCount');
+  if (!text.trim()) {
+    out.innerHTML = '<span class="text-gray-400 text-xs">→ tokens จะปรากฏที่นี่</span>';
+    cnt.textContent = '0';
+    return;
+  }
+  // Simple tokenization heuristic
+  const words = text.split(/(\s+|[^\w\sก-๙]+)/u).filter(Boolean);
+  let tokens = [];
+  words.forEach(w => {
+    if (!w.trim()) return;
+    if (/^[^\w\sก-๙]+$/.test(w)) {
+      tokens.push({ text: w, type: 'sym' });
+    } else if (w.length > 5) {
+      tokens.push({ text: w.slice(0, 3), type: 'sub' });
+      tokens.push({ text: w.slice(3), type: 'sub' });
+    } else {
+      tokens.push({ text: w, type: 'word' });
+    }
+  });
+  out.innerHTML = tokens.map((t, i) => {
+    const [bg, tc] = tokenColors[i % tokenColors.length];
+    return `<span class="token ${bg} ${tc}">${t.text}</span>`;
+  }).join('');
+  cnt.textContent = tokens.length;
+}
+
+// ═══════════════════════════════════════════════════════
+//  LAB 1: PROMPT SIMULATOR
+// ═══════════════════════════════════════════════════════
+const scenarios = [
+  {
+    name: "Review Code",
+    bad: "ช่วย review code หน่อย",
+    good: "ฉันเป็น dev ทีม SSD ทำงานกับ React/TypeScript\nช่วย review OrderForm.tsx ตาม SSD standard:\n- ห้ามใช้ any\n- form ต้องใช้ Formik\n- component ต้องมี Props type ชื่อ [Name]Props\nรายงาน violations พร้อม line number",
+    responses: {
+      bad: "ได้เลย! นี่คือ code review ทั่วไป:\n• ตรวจสอบ naming convention\n• ดู logic ว่าถูกต้องไหม\n• เช็ค error handling\n\n(หมายเหตุ: ต้องส่ง code ให้ดูด้วยนะ)",
+      medium: "ฉันจะ review React code ให้:\n• Props type ควรตั้งชื่อให้ชัดเจน\n• ระวัง any type\n• Form handling ควรใช้ library\n\nส่ง code มาเลย!",
+      good: "## Frontend Review Report (SSD Standard)\n\n### ❌ Violations\n| File | Line | Category | ปัญหา |\n|------|------|----------|-------|\n| OrderForm.tsx | 12 | Types | ใช้ `any` → ควรเป็น `OrderDto` |\n| OrderForm.tsx | 8 | Props | `Props` → ควรเป็น `OrderFormProps` |\n| OrderForm.tsx | 25 | Forms | ใช้ useState+onChange แทน Formik |\n\n### ✅ Pass\n- Component เป็น PascalCase ถูกต้อง\n\n### สรุป: 3 violations"
+    }
+  },
+  {
+    name: "Fix Bug",
+    bad: "มี bug ช่วยแก้",
+    good: "Project: SSD React app (react-ts-template-2023)\nBug: หลัง deploy ผู้ใช้บาง device เจอหน้าขาว วน redirect ไม่หยุด\nFile: src/app/modules/_auth/components/AuthProvider.tsx\nรูปแบบ: silent-first flow + sessionStorage guard\nช่วย apply fix จาก ssd-bug-std-auth-redirect-loop",
+    responses: {
+      bad: "Bug อาจเกิดจากหลายสาเหตุ:\n• Null reference\n• Logic error\n• State management ผิด\n\nส่ง error message หรือ code มาเพื่อช่วยได้ดีขึ้น",
+      medium: "อาจเป็น auth redirect issue ลอง:\n1. ตรวจสอบ token expired handling\n2. เพิ่ม try/catch\n3. ดู console errors",
+      good: "## Auth Redirect Loop Fix\n\nRoot cause: `signinRedirect()` ถูกเรียกทันทีเมื่อ getUser() ไม่เจอ user → redirect loop\n\n**Step 1:** สร้าง `src/app/modules/_auth/authRedirect.ts`\n```ts\nexport const setAuthRedirectInProgress = () =>\n  window.sessionStorage.setItem('auth_redirect_in_progress', Date.now().toString());\n```\n\n**Step 2:** แก้ AuthProvider.tsx — เพิ่ม signinSilentThenRedirect() แทน signinRedirect() ตรงๆ\n\n**Verify:** ตรวจใน sessionStorage ว่าไม่มี key ค้างหลัง login สำเร็จ"
+    }
+  },
+  {
+    name: "Explain Code",
+    bad: "อธิบาย code นี้ให้หน่อย",
+    good: "ฉันเป็น developer ใหม่ใน SSD ทีม Backend (.NET)\nช่วยอธิบาย pattern นี้ในแง่ที่เชื่อมกับ Clean Architecture:\n```csharp\npublic class TaskService : ITaskService { ... }\n```\nต้องการเข้าใจ: ทำไมต้องมี Interface, inject ยังไงใน controller",
+    responses: {
+      bad: "Code นี้เป็น class ใน C# ที่ implement interface\nใช้สำหรับ dependency injection",
+      medium: "TaskService implements ITaskService เพื่อ:\n• ทดสอบง่ายขึ้น (mock ได้)\n• Dependency Injection\n• Clean code",
+      good: "## Clean Architecture: Service + Interface Pattern\n\n**ทำไมต้องมี Interface?**\n```\nController → depends on → ITaskService (interface)\n                          ↑ implements\n                    TaskService (concrete)\n```\n\n• Controller รู้แค่ว่ามี `ITaskService.GetAll()` — ไม่รู้ว่าเป็น SQL, mock, หรืออะไร\n• เปลี่ยน implementation ได้โดยไม่แก้ controller\n• Unit test ได้โดย inject MockTaskService\n\n**SSD Pattern ใน Controller:**\n```csharp\nprivate readonly ITaskService _taskService;\npublic TaskController(ITaskService taskService) {\n  _taskService = taskService;\n}\n```"
+    }
+  }
+];
+
+let currentScenarioIndex = 0;
+let lab1Submitted = false;
+
+function selectScenario(i) {
+  currentScenarioIndex = i;
+  document.querySelectorAll('.scenario-btn').forEach((b, idx) => {
+    b.className = `scenario-btn px-4 py-2 rounded-lg text-sm border-2 ${idx === i ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600'}`;
+  });
+  document.getElementById('promptInput').value = '';
+  document.getElementById('aiResponse').innerHTML = '<span class="text-gray-400">กด "จำลอง AI Response" เพื่อดูผลลัพธ์</span>';
+  document.getElementById('promptHints').innerHTML = '';
+  document.getElementById('lab1Result').innerHTML = '';
+  lab1Submitted = false;
+}
+
+const qualityKeywords = ['บริบท','context','standard','มาตรฐาน','file','ไฟล์','ssd','output','รายงาน','format','skill'];
+
+function analyzePrompt() {
+  const text = document.getElementById('promptInput').value.toLowerCase();
+  const len = text.length;
+  const kw = qualityKeywords.filter(k => text.includes(k)).length;
+  let score = 0;
+  if (len > 20) score++;
+  if (len > 50) score++;
+  if (kw >= 1) score++;
+  if (kw >= 3) score++;
+  if (text.includes('\n')) score++;
+
+  const dots = document.getElementById('qualityDots').children;
+  const colors = ['bg-red-400','bg-orange-400','bg-yellow-400','bg-lime-400','bg-green-400'];
+  const labels = ['ต่ำมาก','ต่ำ','พอใช้','ดี','ดีมาก'];
+  for (let i = 0; i < 5; i++) {
+    dots[i].className = `w-2.5 h-2.5 rounded-full ${i <= score-1 ? colors[Math.min(score-1,4)] : 'bg-gray-200'}`;
+  }
+  document.getElementById('qualityLabel').textContent = score > 0 ? labels[Math.min(score-1,4)] : 'quality';
+
+  const hints = document.getElementById('promptHints');
+  const tips = [];
+  if (len < 20) tips.push('💡 เพิ่มบริบทมากขึ้น');
+  if (!text.includes('standard') && !text.includes('มาตรฐาน')) tips.push('💡 ระบุ standard ที่ต้องการ');
+  if (!text.includes('output') && !text.includes('รายงาน') && !text.includes('format')) tips.push('💡 ระบุ format ของผลลัพธ์');
+  hints.innerHTML = tips.map(t => `<div class="text-xs text-amber-600">${t}</div>`).join('');
+}
+
+function getPromptQuality(text) {
+  const len = text.length;
+  const kw = qualityKeywords.filter(k => text.toLowerCase().includes(k)).length;
+  if (len > 80 && kw >= 3) return 'good';
+  if (len > 40 && kw >= 1) return 'medium';
+  return 'bad';
+}
+
+function runSimulator() {
+  const text = document.getElementById('promptInput').value.trim();
+  if (!text) {
+    document.getElementById('aiResponse').innerHTML = '<span class="text-red-500 text-sm">⚠️ กรุณาพิมพ์ prompt ก่อน</span>';
+    return;
+  }
+  const quality = getPromptQuality(text);
+  const response = scenarios[currentScenarioIndex].responses[quality];
+  const aiDiv = document.getElementById('aiResponse');
+  aiDiv.className = 'border rounded-xl p-4 text-sm min-h-32 ' +
+    (quality === 'good' ? 'bg-green-50 border-green-200' :
+     quality === 'medium' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200');
+  aiDiv.innerHTML = response.replace(/\n/g, '<br>').replace(/```[^`]*```/g, m =>
+    `<pre class="bg-gray-800 text-green-300 rounded p-2 text-xs mt-1 overflow-x-auto">${m.replace(/```\w*/g,'').trim()}</pre>`);
+
+  const resultDiv = document.getElementById('lab1Result');
+  const emoji = quality === 'good' ? '🌟' : quality === 'medium' ? '👍' : '😅';
+  const msg = quality === 'good' ? 'Prompt ยอดเยี่ยม! AI ตอบได้ตรงและมีประโยชน์มาก' :
+              quality === 'medium' ? 'Prompt ดีพอใช้ แต่เพิ่ม context เพิ่มเติมได้อีก' :
+              'Prompt ยังไม่ชัดเจน — ลองเพิ่มบริบท มาตรฐาน และ format ที่ต้องการ';
+  resultDiv.innerHTML = `<div class="text-sm p-3 rounded-xl ${quality === 'good' ? 'bg-green-50 text-green-800' : quality === 'medium' ? 'bg-yellow-50 text-yellow-800' : 'bg-red-50 text-red-800'}">${emoji} ${msg}</div>`;
+
+  if (quality === 'good' && !state.lab1Done) {
+    state.lab1Done = true;
+    addScore(10);
+    document.getElementById('lab1Score').textContent = '✅ Lab 1 สำเร็จ! +10 คะแนน';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LAB 2: SKILL QUIZ
+// ═══════════════════════════════════════════════════════
+const quizData = [
+  { scenario: "นักพัฒนาต้องการสร้าง Redux slice ใหม่สำหรับ authentication ใน React project", correct: "ssd-react-state", options: ["ssd-react-state","ssd-react-api","ssd-frontend-setup","ssd-react-component"], explain: "ssd-react-state ครอบคลุม createSlice, actions, reducer patterns" },
+  { scenario: "พบว่า C# controller ไม่มี XML comment และ HTTP method ไม่มี Name attribute", correct: "ssd-backend-review", options: ["ssd-dotnet-controller","ssd-backend-review","ssd-backend-refactor","ssd-dotnet-service"], explain: "ssd-backend-review ใช้สำหรับตรวจหา violations — ยังไม่แก้ไข" },
+  { scenario: "ต้องการเริ่มต้น FastAPI project ใหม่จากมาตรฐาน SSD", correct: "ssd-python-starter", options: ["ssd-python-review","ssd-python-starter","ssd-python-refactor","ssd-dotnet-infra"], explain: "ssd-python-starter guide ครอบคลุม clone template → configure → สร้าง bounded context" },
+  { scenario: "User รายงานว่าหลัง deploy ใหม่ browser ยังโหลด JS เก่าอยู่", correct: "ssd-bug-std-version-checker", options: ["ssd-bug-std-auth-redirect-loop","ssd-bug-std-version-checker","ssd-frontend-setup","ssd-react-api"], explain: "ssd-bug-std-version-checker แก้ปัญหา browser cache JS chunk เก่า + VersionChecker race condition" },
+  { scenario: "ต้องการตั้งชื่อ branch สำหรับแก้ bug urgent ใน production", correct: "ssd-git-flow", options: ["ssd-git-commit","ssd-git-flow","ssd-backend-setup","ssd-dotnet-infra"], explain: "ssd-git-flow กำหนด hotfix/* branch pattern สำหรับ production fixes" },
+  { scenario: "มี DLL ใหม่ที่ทีมอื่นสร้างและต้องการสร้าง skill สำหรับ integrate มันเข้า .NET projects", correct: "ssd-contact-skill-gen", options: ["ssd-contact-skill-gen","ssd-dotnet-infra","ssd-backend-setup","ssd-dotnet-service"], explain: "ssd-contact-skill-gen สร้าง SKILL.md ใหม่สำหรับ shared library/contact service ใดๆ" },
+  { scenario: "Python service ใช้ print() แทน structlog และ raise HTTPException จาก domain layer", correct: "ssd-python-refactor", options: ["ssd-python-review","ssd-python-refactor","ssd-python-starter","ssd-dotnet-service"], explain: "violations เหล่านี้เหมาะกับ ssd-python-refactor (Tier 1: print→log, Tier 3: HTTPException→DomainError)" },
+  { scenario: "ต้องการเขียน Quartz background job ให้ถูกต้อง ใส่ cron expression และ prevent concurrent execution", correct: "ssd-dotnet-infra", options: ["ssd-dotnet-controller","ssd-dotnet-service","ssd-dotnet-infra","ssd-backend-setup"], explain: "ssd-dotnet-infra ครอบคลุม Quartz job patterns, cron expressions, [DisallowConcurrentExecution]" },
+];
+
+let currentQuiz = 0;
+let quizScore = 0;
+let totalQuizPts = 0;
+
+function renderQuiz() {
+  const q = quizData[currentQuiz];
+  const container = document.getElementById('quizContainer');
+  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+  container.innerHTML = `
+    <div class="fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs text-gray-400">ข้อ ${currentQuiz + 1} / ${quizData.length}</span>
+        <div class="flex gap-1">
+          ${quizData.map((_, i) => `<div class="w-2 h-2 rounded-full ${i < currentQuiz ? 'bg-indigo-400' : i === currentQuiz ? 'bg-indigo-600' : 'bg-gray-200'}"></div>`).join('')}
+        </div>
+      </div>
+      <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-4 text-sm">
+        <strong>Scenario:</strong> ${q.scenario}
+      </div>
+      <div class="text-xs font-medium text-gray-500 mb-2">ควรใช้ skill ใด?</div>
+      <div class="grid grid-cols-2 gap-2">
+        ${shuffled.map(opt => `
+          <button onclick="answerQuiz('${opt}')" class="quiz-option rounded-xl p-3 text-sm text-left mono font-medium" id="qopt-${opt}">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div id="quizFeedbackBox" class="mt-3 hidden"></div>
+    </div>
+  `;
+}
+
+function answerQuiz(answer) {
+  const q = quizData[currentQuiz];
+  const buttons = document.querySelectorAll('.quiz-option');
+  buttons.forEach(b => b.classList.add('disabled'));
+
+  const selectedBtn = document.getElementById('qopt-' + answer);
+  const correctBtn = document.getElementById('qopt-' + q.correct);
+
+  const isCorrect = answer === q.correct;
+  if (isCorrect) {
+    selectedBtn.classList.add('correct');
+    quizScore++;
+  } else {
+    selectedBtn.classList.add('wrong');
+    selectedBtn.classList.add('shake');
+    correctBtn.classList.add('correct');
+  }
+
+  const fb = document.getElementById('quizFeedbackBox');
+  fb.className = `mt-3 p-3 rounded-xl text-sm ${isCorrect ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`;
+  fb.innerHTML = `${isCorrect ? '✅' : '❌'} ${q.explain}`;
+  fb.classList.remove('hidden');
+
+  setTimeout(() => {
+    currentQuiz++;
+    if (currentQuiz < quizData.length) {
+      renderQuiz();
+    } else {
+      showQuizResult();
+    }
+  }, 2000);
+}
+
+function showQuizResult() {
+  document.getElementById('quizContainer').innerHTML = '';
+  const resultDiv = document.getElementById('quizResult');
+  resultDiv.classList.remove('hidden');
+  const pct = quizScore / quizData.length;
+  document.getElementById('quizEmoji').textContent = pct >= 0.75 ? '🏆' : pct >= 0.5 ? '👍' : '📚';
+  document.getElementById('quizScoreText').textContent = `${quizScore} / ${quizData.length} ข้อถูก`;
+  document.getElementById('quizFeedback').textContent = pct >= 0.75 ? 'ยอดเยี่ยม! คุณเข้าใจ SSD Skills แล้ว' : pct >= 0.5 ? 'ดี! ลองอ่าน skills overview อีกรอบ' : 'ลองอ่าน Module 2 อีกครั้งนะ';
+
+  if (!state.lab2Done) {
+    state.lab2Done = true;
+    const pts = Math.round((quizScore / quizData.length) * 20);
+    addScore(pts);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LAB 3: CODE REVIEW
+// ═══════════════════════════════════════════════════════
+const codeLines = [
+  { text: 'import React, { useState } from "react";', ok: true },
+  { text: 'import axios from "axios";', ok: true },
+  { text: '', ok: true },
+  { text: 'interface Props {', violation: 1, ok: false },
+  { text: '    items: any[];', violation: 2, ok: false },
+  { text: '    onSelect: (item: any) => void;', violation: 2, ok: false },
+  { text: '}', ok: true },
+  { text: '', ok: true },
+  { text: 'const OrderItemDisplay = ({ items, onSelect }: Props) => {', ok: true },
+  { text: '    const [search, setSearch] = useState("");', ok: true },
+  { text: '', ok: true },
+  { text: '    const fetchData = async () => {', ok: true },
+  { text: '        const res = await axios.get(`${import.meta.env.VITE_API_URL}/orders`);', violation: 3, ok: false },
+  { text: '    };', ok: true },
+  { text: '', ok: true },
+  { text: '    return (', ok: true },
+  { text: '        <React.Fragment>', violation: 4, ok: false },
+  { text: '            {items.map((item, index) => (', ok: true },
+  { text: '                <div key={index}>{item.name}</div>', violation: 5, ok: false },
+  { text: '            ))}', ok: true },
+  { text: '            <button disabled={true}>ค้นหา</button>', violation: 6, ok: false },
+  { text: '        </React.Fragment>', violation: 4, ok: false },
+  { text: '    );', ok: true },
+  { text: '};', ok: true },
+];
+
+const violationOptions = [
+  { id: 1, text: '❌ Props type ชื่อ "Props" แทน "OrderItemDisplayProps"', correct: true, category: 'Naming' },
+  { id: 2, text: '❌ ใช้ any type (ควรเป็น unknown หรือระบุ type จริง)', correct: true, category: 'Types' },
+  { id: 3, text: '❌ axios.get() ใน component ตรงๆ (ควรใช้ useQuery)', correct: true, category: 'API' },
+  { id: 4, text: '❌ ใช้ <React.Fragment> แทน <>', correct: true, category: 'Component' },
+  { id: 5, text: '❌ ใช้ index เป็น key ใน list', correct: true, category: 'Lists' },
+  { id: 6, text: '❌ disabled={true} ควรเขียนแค่ disabled', correct: true, category: 'Props' },
+  { id: 7, text: 'useState ใช้ "" เป็น initial value', correct: false, category: 'N/A' },
+  { id: 8, text: 'import axios จาก library ไม่ใช่ชื่อ SSD', correct: false, category: 'N/A' },
+];
+
+function renderCodeReview() {
+  const codeDiv = document.getElementById('codeDisplay');
+  codeDiv.innerHTML = codeLines.map((line, i) => {
+    const escaped = line.text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const cls = line.ok === false ? 'err-line' : '';
+    return `<div class="${cls} px-2 py-0.5 rounded"><span class="text-gray-500 select-none mr-3 text-xs">${String(i+1).padStart(2,'0')}</span><span class="text-gray-100">${escaped}</span></div>`;
+  }).join('');
+
+  const checksDiv = document.getElementById('violationChecks');
+  checksDiv.innerHTML = violationOptions.map(v => `
+    <label class="flex items-start gap-2 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition">
+      <input type="checkbox" class="mt-0.5 review-check" data-id="${v.id}" data-correct="${v.correct}">
+      <span class="text-sm text-gray-700">${v.text}</span>
+    </label>
+  `).join('');
+}
+
+function submitCodeReview() {
+  const checks = document.querySelectorAll('.review-check');
+  let tp = 0, fp = 0, fn = 0;
+  const correct = violationOptions.filter(v => v.correct);
+
+  checks.forEach(c => {
+    const isCorrect = c.dataset.correct === 'true';
+    if (c.checked && isCorrect) tp++;
+    if (c.checked && !isCorrect) fp++;
+  });
+  fn = correct.length - tp;
+
+  const score = Math.max(0, tp - fp);
+  const pct = Math.round((score / correct.length) * 100);
+
+  const resultDiv = document.getElementById('reviewResult');
+  const colorClass = pct >= 80 ? 'bg-green-50 border-green-200 text-green-800' :
+                     pct >= 50 ? 'bg-yellow-50 border-yellow-200 text-yellow-800' :
+                     'bg-red-50 border-red-200 text-red-800';
+  resultDiv.innerHTML = `
+    <div class="border rounded-xl p-4 ${colorClass} text-sm fade-in">
+      <div class="font-semibold mb-2">${pct >= 80 ? '🌟' : pct >= 50 ? '👍' : '📚'} ${pct}% — ถูกต้อง ${tp}/${correct.length} violations</div>
+      <div class="space-y-1 text-xs">
+        ${tp > 0 ? `<div>✅ พบถูก: ${tp} ข้อ</div>` : ''}
+        ${fp > 0 ? `<div>⚠️ False positive: ${fp} ข้อ (ติ๊กผิด)</div>` : ''}
+        ${fn > 0 ? `<div>❌ พลาด: ${fn} ข้อ</div>` : ''}
+      </div>
+      ${fn > 0 ? `<div class="mt-2 text-xs">violations ที่พลาด: ${violationOptions.filter(v => v.correct).filter(v => {
+        const cb = document.querySelector(`.review-check[data-id="${v.id}"]`);
+        return cb && !cb.checked;
+      }).map(v => v.category).join(', ')}</div>` : ''}
+    </div>
+  `;
+
+  if (!state.lab3Done) {
+    state.lab3Done = true;
+    const pts = Math.round((pct / 100) * 25);
+    addScore(Math.max(pts, 5));
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LAB 4: COMMIT MESSAGE
+// ═══════════════════════════════════════════════════════
+const commitScenarios = [
+  { text: "คุณเพิ่ง code เสร็จ: เพิ่ม Controller สำหรับ login API ใหม่", expected: { type: 'feat', scope: 'controller', desc: 'add login controller', breaking: false } },
+  { text: "แก้ไข bug ที่ทำให้การคำนวณยอดชำระผิดพลาดใน PaymentService", expected: { type: 'fix', scope: 'service', desc: 'fix payment calculation error', breaking: false } },
+  { text: "อัปเดต README.md อธิบาย setup steps ใหม่", expected: { type: 'docs', scope: '', desc: 'update README setup steps', breaking: false } },
+  { text: "เปลี่ยนโครงสร้าง OrderService โดยไม่เปลี่ยน behavior", expected: { type: 'refactor', scope: 'service', desc: 'restructure order service', breaking: false } },
+];
+
+function selectCommitScenario(i) {
+  state.currentCommitScenario = i;
+  document.querySelectorAll('.commit-scene-btn').forEach((b, idx) => {
+    b.className = `commit-scene-btn px-3 py-1.5 rounded-lg text-xs border-2 ${idx === i ? 'border-indigo-400 bg-indigo-50 text-indigo-700 font-medium' : 'border-gray-200 text-gray-500'}`;
+  });
+  document.getElementById('commitScenarioText').textContent = commitScenarios[i].text;
+  document.getElementById('commitType').value = '';
+  document.getElementById('commitScope').value = '';
+  document.getElementById('commitDesc').value = '';
+  document.getElementById('breakingChange').checked = false;
+  document.getElementById('commitResult').innerHTML = '';
+  updateCommitPreview();
+  state.commitAttempts = 0;
+}
+
+function updateCommitPreview() {
+  const type = document.getElementById('commitType').value;
+  const scope = document.getElementById('commitScope').value;
+  const desc = document.getElementById('commitDesc').value;
+  const breaking = document.getElementById('breakingChange').checked;
+  const descLen = desc.length;
+
+  document.getElementById('descCount').textContent = descLen;
+  document.getElementById('descWarning').classList.toggle('hidden', descLen <= 50);
+
+  let preview = '';
+  if (type) {
+    preview = type;
+    if (scope) preview += `(${scope})`;
+    if (breaking) preview += '!';
+    preview += ': ';
+    if (desc) preview += desc;
+  }
+  document.getElementById('commitPreview').textContent = preview || '_';
+}
+
+function validateCommit() {
+  const type = document.getElementById('commitType').value;
+  const scope = document.getElementById('commitScope').value;
+  const desc = document.getElementById('commitDesc').value;
+  const breaking = document.getElementById('breakingChange').checked;
+  const expected = commitScenarios[state.currentCommitScenario].expected;
+
+  if (!type || !desc) {
+    document.getElementById('commitResult').innerHTML = '<div class="text-sm text-red-500 p-2">⚠️ กรุณาเลือก type และใส่ description</div>';
+    return;
+  }
+
+  state.commitAttempts++;
+  let pts = 0;
+  const issues = [];
+  const good = [];
+
+  if (type === expected.type) { pts += 2; good.push('✅ Type ถูกต้อง'); }
+  else issues.push(`❌ Type: "${type}" — สำหรับ scenario นี้ควรเป็น "${expected.type}"`);
+
+  if (expected.scope) {
+    if (scope === expected.scope) { pts += 1; good.push('✅ Scope ถูกต้อง'); }
+    else if (scope) issues.push(`⚠️ Scope: "${scope}" — แนะนำ "${expected.scope}"`);
+  }
+
+  if (desc.length >= 5 && desc.length <= 50) { pts += 1; good.push('✅ Description ความยาวเหมาะสม'); }
+  else if (desc.length > 50) issues.push('❌ Description ยาวเกินไป (>50 chars)');
+
+  if (breaking === expected.breaking) { pts += 1; good.push('✅ Breaking change ถูกต้อง'); }
+  else issues.push(`❌ Breaking change: ควรเป็น ${expected.breaking}`);
+
+  const isPerfect = pts >= 4;
+  const resultDiv = document.getElementById('commitResult');
+  resultDiv.innerHTML = `
+    <div class="border rounded-xl p-4 ${isPerfect ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} text-sm fade-in">
+      <div class="font-medium mb-2">${isPerfect ? '🎯 สมบูรณ์แบบ!' : `💡 ${pts}/5 คะแนน`}</div>
+      <div class="space-y-1 text-xs">${[...good, ...issues].map(i => `<div>${i}</div>`).join('')}</div>
+      ${isPerfect ? '' : `<div class="mt-2 text-xs text-gray-500">แนะนำ: <span class="mono font-medium text-gray-700">${expected.type}${expected.scope ? `(${expected.scope})` : ''}: ${expected.desc}</span></div>`}
+    </div>
+  `;
+
+  if (isPerfect && !state.lab4Done) {
+    state.lab4Done = true;
+    addScore(20);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LAB 5: BRANCH NAMING
+// ═══════════════════════════════════════════════════════
+const branchChallenges = [
+  { scenario: "สร้าง feature ใหม่: เพิ่มหน้า dashboard สำหรับ report", hint: "feature/...", acceptable: ['feature/add-dashboard-page','feature/add-report-dashboard','feature/dashboard'], example: 'feature/add-dashboard-page' },
+  { scenario: "แก้ bug urgent ใน production: ราคา order คำนวณผิด", hint: "hotfix/...", acceptable: ['hotfix/fix-order-price','hotfix/fix-price-calculation','hotfix/fix-order-bug'], example: 'hotfix/fix-order-price' },
+  { scenario: "เตรียม release version 2.1.0", hint: "release/...", acceptable: ['release/2.1.0','release/v2.1.0'], example: 'release/2.1.0' },
+  { scenario: "Project มีหลาย sub-project: ทำ feature ให้ project SSS เพิ่ม login page", hint: "feature/sss-...", acceptable: ['feature/sss-add-login-page','feature/sss-login','feature/sss-login-page'], example: 'feature/sss-add-login-page' },
+  { scenario: "ทำ feature เพิ่ม API ใหม่ มีเลข spec: api-5", hint: "feature/api5-...", acceptable: ['feature/api5-add-payment-api','feature/api-5-add-payment','feature/api5-payment'], example: 'feature/api5-add-payment-api' },
+];
+
+let branchIdx = 0;
+let branchPts = 0;
+
+function renderBranchQuiz() {
+  if (branchIdx >= branchChallenges.length) {
+    showBranchResult();
+    return;
+  }
+  const q = branchChallenges[branchIdx];
+  document.getElementById('branchQuiz').innerHTML = `
+    <div class="fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs text-gray-400">ข้อ ${branchIdx + 1} / ${branchChallenges.length}</span>
+        <div class="flex gap-1">
+          ${branchChallenges.map((_, i) => `<div class="w-2 h-2 rounded-full ${i < branchIdx ? 'bg-orange-400' : i === branchIdx ? 'bg-orange-600' : 'bg-gray-200'}"></div>`).join('')}
+        </div>
+      </div>
+      <div class="bg-orange-50 border border-orange-100 rounded-xl p-4 mb-4 text-sm">
+        <strong>Scenario:</strong> ${q.scenario}
+      </div>
+      <div class="text-xs font-medium text-gray-500 mb-1">ตั้งชื่อ branch: <span class="text-orange-500">(hint: ${q.hint})</span></div>
+      <div class="flex gap-2">
+        <input type="text" id="branchInput" class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm mono focus:outline-none focus:ring-2 focus:ring-orange-300" placeholder="${q.hint}">
+        <button onclick="checkBranch()" class="bg-orange-500 hover:bg-orange-600 text-white px-5 rounded-xl text-sm font-medium transition">ตรวจ</button>
+      </div>
+      <div id="branchFeedback" class="mt-3"></div>
+    </div>
+  `;
+  document.getElementById('branchInput').focus();
+  document.getElementById('branchInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkBranch(); });
+}
+
+function checkBranch() {
+  const q = branchChallenges[branchIdx];
+  const val = document.getElementById('branchInput').value.trim().toLowerCase();
+  const fb = document.getElementById('branchFeedback');
+
+  if (!val) return;
+
+  // Check rules
+  const isKebab = /^[a-z][a-z0-9-/]*$/.test(val);
+  const hasRightPrefix = q.acceptable.some(a => val.startsWith(a.split('/')[0] + '/'));
+  const isAcceptable = q.acceptable.some(a => val.includes(a.split('/')[1].split('-')[0]) && hasRightPrefix);
+
+  const violations = [];
+  if (!isKebab) violations.push('ชื่อต้องเป็น lowercase kebab-case');
+  if (!hasRightPrefix) violations.push(`ต้องขึ้นต้นด้วย "${q.hint}"`);
+
+  const isCorrect = violations.length === 0 && isAcceptable;
+
+  if (isCorrect) {
+    branchPts++;
+    fb.innerHTML = `<div class="p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 fade-in">✅ ถูกต้อง! "${val}" ตรง convention</div>`;
+  } else if (violations.length === 0) {
+    fb.innerHTML = `<div class="p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-sm text-yellow-800 fade-in">⚠️ รูปแบบถูกต้อง แต่ description อาจชัดขึ้นได้<br><span class="text-xs">ตัวอย่าง: <span class="mono font-medium">${q.example}</span></span></div>`;
+    branchPts += 0.5;
+  } else {
+    fb.innerHTML = `<div class="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800 shake fade-in">❌ ${violations.join(', ')}<br><span class="text-xs mt-1 block">ตัวอย่าง: <span class="mono font-medium">${q.example}</span></span></div>`;
+  }
+
+  document.getElementById('branchInput').disabled = true;
+  setTimeout(() => { branchIdx++; renderBranchQuiz(); }, 2000);
+}
+
+function showBranchResult() {
+  const pct = Math.round((branchPts / branchChallenges.length) * 100);
+  document.getElementById('branchQuiz').innerHTML = `
+    <div class="bg-gray-50 rounded-xl p-5 text-center fade-in">
+      <div class="text-3xl mb-2">${pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '📚'}</div>
+      <div class="font-semibold">${Math.round(branchPts)}/${branchChallenges.length} ถูกต้อง (${pct}%)</div>
+      <div class="text-sm text-gray-500 mt-1">
+        ${pct >= 80 ? 'ยอดเยี่ยม! เข้าใจ Git Flow naming แล้ว' : 'ลองดู ssd-git-flow skill อีกครั้งนะ'}
+      </div>
+    </div>
+  `;
+
+  if (!state.lab5Done) {
+    state.lab5Done = true;
+    const pts = Math.round((pct / 100) * 25);
+    addScore(Math.max(pts, 5));
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  SKILL DETAIL MODAL
+// ═══════════════════════════════════════════════════════
+const skillDetails = {
+  'frontend-setup': { title: 'ssd-frontend-setup', desc: 'ตั้งค่าโปรเจค Frontend ใหม่', items: ['VS Code extensions ที่ต้องติดตั้ง','Prettier config (tabWidth 4, CRLF)','Naming: PascalCase component, kebab-case route','Folder: src/app/{layout,api,modules,routes,redux}','Env vars: VITE_ prefix, ใช้ผ่าน window.__CONST__ENV__'] },
+  'react-component': { title: 'ssd-react-component', desc: 'มาตรฐาน React Component', items: ['export type [Name]Props','1 component ต่อ 1 ไฟล์','Fragment: <> แทน <React.Fragment>','ห้าม React.createElement','Boolean prop: disabled ไม่ใช่ disabled={true}'] },
+  'react-form': { title: 'ssd-react-form', desc: 'Form Handling ด้วย Formik', items: ['ใช้ useFormik<T>() เสมอ','enableReinitialize: true','validate function return FormikErrors<T>','Custom component: getFieldProps + getFieldMeta','ห้าม raw useState+onChange สำหรับ form'] },
+  'react-state': { title: 'ssd-react-state', desc: 'Redux Toolkit', items: ['createSlice({ name, initialState, reducers })','export actions, reducer, selector','useAppSelector จาก redux/hook.ts','useAppDispatch จาก redux/hook.ts','rootReducer.ts รวม all slices'] },
+  'react-api': { title: 'ssd-react-api', desc: 'API Calls ด้วย React Query', items: ['useQuery สำหรับ GET','useMutation สำหรับ POST/action','queryKeys object สำหรับ key management','NSwag code generation workflow','ห้าม axios ใน component โดยตรง'] },
+  'frontend-review': { title: 'ssd-frontend-review', desc: 'ตรวจ violations Frontend', items: ['9 categories: Types, Naming, Component, Lists, Props, Env, Forms, State, API, Testing','Report พร้อม file:line','ใช้ก่อน PR'] },
+  'frontend-refactor': { title: 'ssd-frontend-refactor', desc: 'แก้ไขปลอดภัยด้วย 4 Tiers', items: ['Tier 1: Fragment, Boolean prop (ปลอดภัย)','Tier 2: any→unknown + npx tsc --noEmit','Tier 3: Rename + grep usages ก่อน','Tier 4: Route paths → ห้ามแก้, แจ้ง user'] },
+};
+
+function showSkillDetail(key) {
+  const d = skillDetails[key];
+  if (!d) return;
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalContent').innerHTML = `
+    <p class="text-gray-500 text-sm mb-3">${d.desc}</p>
+    <ul class="space-y-1.5">
+      ${d.items.map(i => `<li class="flex items-start gap-2 text-sm"><span class="text-indigo-500 mt-0.5">•</span>${i}</li>`).join('')}
+    </ul>
+  `;
+  document.getElementById('skillModal').classList.remove('hidden');
+  document.getElementById('skillModal').classList.add('flex');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('skillModal')) {
+    document.getElementById('skillModal').classList.add('hidden');
+    document.getElementById('skillModal').classList.remove('flex');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  COMPLETION
+// ═══════════════════════════════════════════════════════
+function showCompletion() {
+  document.getElementById('completion').classList.remove('hidden');
+  document.getElementById('finalScore').textContent = state.score;
+  const msg = state.score >= 90 ? '🌟 ระดับ Expert — พร้อมนำ AI ไปใช้ในงานได้ 100%' :
+              state.score >= 70 ? '💪 ระดับ Intermediate — เข้าใจ SSD Skills ดี' :
+              '📚 ระดับ Beginner — ลองทำ labs อีกครั้งเพื่อเพิ่มความเข้าใจ';
+  document.getElementById('completionMessage').textContent = msg;
+  document.getElementById('completion').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  selectScenario(0);
+  renderQuiz();
+  renderCodeReview();
+  selectCommitScenario(0);
+  renderBranchQuiz();
+  document.getElementById('commitScenarioText').textContent = commitScenarios[0].text;
+});
+</script>
+</body>
+</html>
