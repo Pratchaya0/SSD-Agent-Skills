@@ -178,114 +178,36 @@ version: 1.0.0
 
 ## ตัวอย่าง SKILL.md ที่สร้างโดย skill นี้
 
-ตัวอย่าง output จาก `LineOAPA.Shared.md` → SKILL.md สำหรับ Line OA integration:
+ตัวอย่าง output จาก `LineOAPA.Shared.md` → `skills/ssd-lineoa-contact/SKILL.md`
 
----
+### Frontmatter ที่ได้
 
-```markdown
----
+```yaml
 name: ssd-lineoa-contact
-description: ใช้ skill นี้เมื่อต้องการเชื่อมต่อ Line OA (Official Account) contact เข้า .NET project, ติดตั้ง LineOAPA.Shared.dll จาก private GitHub release, ตั้งค่า MassTransit RabbitMQ request clients, หรือส่งข้อความผ่าน Line OA ตามมาตรฐาน SSD
+description: ใช้ skill นี้เมื่อต้องการเชื่อมต่อ Line OA contact เข้า .NET project,
+  ติดตั้ง LineOAPA.Shared.dll จาก private GitHub release, ตั้งค่า MassTransit RabbitMQ
 version: 1.0.0
----
-
-# SSD Line OA Contact — การเชื่อมต่อ Line OA ใน .NET Project
-
-## บริบท
-
-SSD มี shared library `LineOAPA.Shared.dll` ที่ใช้เชื่อมต่อกับ Line OA Platform API
-ทุก .NET project ที่ต้องการส่งข้อความหรือจัดการ contact ผ่าน Line OA ต้องติดตั้ง
-DLL นี้และตั้งค่า MassTransit RabbitMQ ผ่านขั้นตอน 3 ขั้น
-
-Request clients ที่มีให้ใช้:
-- `LinkUserToAccessRichMenu` — เชื่อม user เข้า Rich Menu
-- `UnlinkUserFromAccessRichMenu` — ยกเลิกการเชื่อม user จาก Rich Menu
-- `RequestSendMessagesToUsers` — ส่งข้อความหา users
-
----
-
-## กฎหลัก
-
-1. **Workspace** = โฟลเดอร์ root ของ repo — โฟลเดอร์ที่มีไฟล์ `.sln` อยู่ ห้าม `cd` เข้าไปใน subfolder
-2. **PROJECT** = โฟลเดอร์ที่มีไฟล์ `.csproj` (ต้องหาก่อนเสมอ — ห้ามเดา)
-3. DLL ต้องอยู่ที่ `{PROJECT}/Contracts/LineOAPA.Shared.dll` เท่านั้น ห้ามมี subfolder, .zip, หรือ .pdb
-4. ห้ามสร้าง `Contracts/` ที่ workspace root โดยตรง (เฉพาะกรณี PROJECT เป็น subfolder)
-5. ห้ามแก้ไข `Startup.cs` ถ้ามี `services.AddMassTransit` อยู่แล้ว
-6. ห้ามลบ `KafkaSetting` — แก้เฉพาะ `EnableRabbitMQ` และ `Port` ใน appsettings.json
-7. ห้ามแก้ไข ItemGroup entries อื่นใน `.csproj`
-8. ห้ามสร้าง `YourService.cs` หรือ service file ใดๆ หากไม่ได้รับคำสั่ง
-
-| mkdir command | เมื่อ | ผล |
-|---|---|---|
-| `mkdir $PROJECT/Contracts` | workspace มี .sln, PROJECT เป็น subfolder | **ถูก** |
-| `mkdir Contracts` | PROJECT เป็น subfolder ไม่ใช่ workspace root | **ผิด** |
-| `mkdir $PROJECT/$PROJECT/Contracts` | อยู่ใน PROJECT folder แล้ว | **ผิด** |
-
----
-
-## ขั้นตอนที่ 1: ตรวจหา Workspace และ PROJECT
-
-```bash
-pwd
-ls *.sln
-ls */*.csproj
-# TestSkills.API/TestSkills.API.csproj → PROJECT=TestSkills.API
-PROJECT=<ชื่อโฟลเดอร์ที่มี .csproj>
-\```
-
----
-
-## ขั้นตอนที่ 2: ดาวน์โหลดและติดตั้ง DLL
-
-```bash
-rm -rf ./Contracts
-rm -rf ./$PROJECT/$PROJECT
-mkdir -p $PROJECT/Contracts
-gh release download v1.1.0 -R SiamsmileDev/LineOAPASAdmin_API -p LineOAPA.Shared.zip -D .
-tar -xf LineOAPA.Shared.zip -C $PROJECT/Contracts
-mv $PROJECT/Contracts/LineOAPA.Shared/LineOAPA.Shared.dll $PROJECT/Contracts/ 2>/dev/null || true
-rm -rf $PROJECT/Contracts/LineOAPA.Shared
-rm -f $PROJECT/Contracts/*.pdb LineOAPA.Shared.zip
-ls -la $PROJECT/Contracts/LineOAPA.Shared.dll
-\```
-
----
-
-## ขั้นตอนที่ 3: เพิ่มการตั้งค่าใน Project Files
-
-**`{ProjectFolder}/{ProjectFolder}.csproj`**
-```xml
-<ItemGroup>
-  <Reference Include="LineOAPA.Shared">
-    <HintPath>Contracts\LineOAPA.Shared.dll</HintPath>
-  </Reference>
-</ItemGroup>
-\```
-
-**`{ProjectFolder}/appsettings.json`**
-```json
-"EnableRabbitMQ": true,
-"Port": 5672,
-\```
-
-**`{ProjectFolder}/ProjectSetup.cs`**
-```csharp
-using LineOAPA.Shared;
-
-configure.AddRequestClient<LinkUserToAccessRichMenu>();
-configure.AddRequestClient<UnlinkUserFromAccessRichMenu>();
-configure.AddRequestClient<RequestSendMessagesToUsers>();
-\```
-
----
-
-## ขั้นตอนที่ 4: ตรวจสอบ Build
-
-```bash
-dotnet build $PROJECT/$PROJECT.csproj
-test -f $PROJECT/Contracts/LineOAPA.Shared.dll
-! test -d ./Contracts
-! test -d $PROJECT/$PROJECT
-ls $PROJECT/Contracts/
-\```
 ```
+
+### บริบทที่ได้
+
+> SSD มี shared library `LineOAPA.Shared.dll` สำหรับ Line OA Platform API  
+> Request clients: `LinkUserToAccessRichMenu`, `UnlinkUserFromAccessRichMenu`, `RequestSendMessagesToUsers`
+
+### กฎหลักที่ได้ (8 ข้อ)
+
+1. **Workspace** = root ของ repo (มี .sln) — ห้าม cd เข้า subfolder
+2. **PROJECT** = folder ที่มี .csproj — ต้องหาก่อนเสมอ
+3. DLL ต้องอยู่ที่ `{PROJECT}/Contracts/LineOAPA.Shared.dll` เท่านั้น
+4. ห้ามสร้าง `Contracts/` ที่ workspace root
+5. ห้ามแก้ `Startup.cs` ถ้ามี `AddMassTransit` อยู่แล้ว
+6. ห้ามลบ `KafkaSetting` — แก้เฉพาะ `EnableRabbitMQ` และ `Port`
+7. ห้ามแก้ ItemGroup อื่นใน .csproj
+8. ห้ามสร้าง service file ถ้าไม่ได้รับคำสั่ง
+
+### ขั้นตอนที่ได้ (4 ขั้น)
+
+1. ตรวจหา workspace + PROJECT (`ls *.sln`, `ls */*.csproj`)
+2. ดาวน์โหลด DLL (`gh release download`, extract, cleanup)
+3. แก้ไข .csproj + appsettings.json + ProjectSetup.cs
+4. `dotnet build` + verify path
