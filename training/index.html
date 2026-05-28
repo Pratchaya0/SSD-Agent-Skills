@@ -207,36 +207,94 @@
       </div>
     </div>
 
-    <!-- How LLM works visual -->
-    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 mb-8">
-      <h3 class="font-semibold mb-4">🔄 วิธี LLM ทำงาน (แบบเข้าใจง่าย)</h3>
-      <div class="flex flex-col md:flex-row items-center gap-4 text-sm">
-        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
-          <div class="text-2xl mb-2">📝</div>
-          <div class="font-medium">1. รับ Prompt</div>
-          <div class="text-gray-500 text-xs mt-1">"เขียน function login"</div>
+    <!-- Token Prediction Simulator -->
+    <div class="bg-gray-950 rounded-2xl p-6 border border-gray-800 mb-8 shadow-xl">
+      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+        <div>
+          <h3 class="font-semibold text-white">🔄 LLM Token Prediction Simulator</h3>
+          <p class="text-gray-400 text-xs mt-0.5">ดูว่า AI "คิด" และ "เลือก" token ถัดไปยังไง — ทีละขั้นตอนจริงๆ</p>
         </div>
-        <div class="text-2xl text-indigo-300">→</div>
-        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
-          <div class="text-2xl mb-2">⚙️</div>
-          <div class="font-medium">2. ประมวลผล</div>
-          <div class="text-gray-500 text-xs mt-1">วิเคราะห์ pattern จาก training data</div>
-        </div>
-        <div class="text-2xl text-indigo-300">→</div>
-        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
-          <div class="text-2xl mb-2">🎲</div>
-          <div class="font-medium">3. เลือก Token</div>
-          <div class="text-gray-500 text-xs mt-1">คำนวณ probability ของ token ถัดไป</div>
-        </div>
-        <div class="text-2xl text-indigo-300">→</div>
-        <div class="bg-white rounded-xl p-4 text-center flex-1 shadow-sm">
-          <div class="text-2xl mb-2">💡</div>
-          <div class="font-medium">4. Output</div>
-          <div class="text-gray-500 text-xs mt-1">สร้าง code ทีละ token</div>
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="llmSelectScenario(0)" id="llms0" class="llms-btn px-3 py-1.5 rounded-lg text-xs border border-indigo-500 bg-indigo-500/20 text-indigo-300 font-medium">📝 Commit Msg</button>
+          <button onclick="llmSelectScenario(1)" id="llms1" class="llms-btn px-3 py-1.5 rounded-lg text-xs border border-gray-700 text-gray-500">🔷 C# Method</button>
+          <button onclick="llmSelectScenario(2)" id="llms2" class="llms-btn px-3 py-1.5 rounded-lg text-xs border border-gray-700 text-gray-500">🐍 Python API</button>
         </div>
       </div>
-      <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-        <strong>💡 Key Insight:</strong> AI ไม่ได้ "รู้" — มันทำนาย token ที่น่าจะตามมา ดังนั้น <strong>Prompt ที่ดี = Context ที่ชัด = ผลลัพธ์ที่ดี</strong>
+
+      <!-- Context window -->
+      <div class="mb-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xs text-gray-500 uppercase tracking-wider">Context Window</span>
+          <span class="text-xs text-gray-600">— สิ่งที่ AI "มองเห็น"</span>
+        </div>
+        <div id="llmContext" class="bg-gray-900 border border-gray-800 rounded-xl p-4 mono text-sm min-h-12 leading-relaxed text-gray-100 whitespace-pre-wrap"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <!-- Left: Probability bars -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Next Token Candidates</span>
+            <span class="text-xs text-gray-600" id="llmStepLabel">—</span>
+          </div>
+          <div id="llmBars" class="space-y-2">
+            <div class="text-gray-600 text-sm text-center py-4">เลือก scenario แล้วกด Generate →</div>
+          </div>
+        </div>
+
+        <!-- Right: Controls + explanation -->
+        <div class="space-y-4">
+          <!-- Temperature -->
+          <div class="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs text-gray-400">🌡️ Temperature</span>
+              <span id="llmTempValue" class="text-xs font-bold text-indigo-400 mono">0.7</span>
+            </div>
+            <input id="llmTemp" type="range" min="1" max="20" value="7" step="1"
+              class="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-gray-700"
+              oninput="llmUpdateTemp(this.value)">
+            <div class="flex justify-between text-xs text-gray-600 mt-1.5">
+              <span>0.1 — เด็ดขาด</span>
+              <span>1.0 — สมดุล</span>
+              <span>2.0 — สุ่ม</span>
+            </div>
+            <div id="llmTempHint" class="mt-2 text-xs p-2 rounded-lg bg-gray-800 text-gray-400">
+              Temperature 0.7: ผสมระหว่าง predictable และ creative
+            </div>
+          </div>
+
+          <!-- Explanation box -->
+          <div id="llmExplain" class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-xs text-gray-400 min-h-16">
+            <span class="text-gray-600">คำอธิบายจะปรากฏที่นี่เมื่อเลือก token...</span>
+          </div>
+
+          <!-- Buttons -->
+          <div class="grid grid-cols-2 gap-2">
+            <button id="llmBestBtn" onclick="llmPickToken('best')"
+              class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2.5 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed">
+              ⚡ Pick Best
+            </button>
+            <button id="llmSurpriseBtn" onclick="llmPickToken('surprise')"
+              class="bg-purple-700 hover:bg-purple-600 text-white text-sm font-medium py-2.5 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed">
+              🎲 Surprise Me
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="llmAutoBtn" onclick="llmToggleAuto()"
+              class="bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium py-2 rounded-xl transition border border-gray-700">
+              ▶ Auto Play
+            </button>
+            <button onclick="llmReset()"
+              class="bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium py-2 rounded-xl transition border border-gray-700">
+              ↺ Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key insight -->
+      <div class="mt-4 p-3 bg-amber-900/30 border border-amber-700/40 rounded-xl text-xs text-amber-300">
+        <strong>💡 Key Insight:</strong> AI ไม่ได้ "รู้" คำตอบ — มันแค่ <strong>ทำนาย token ที่น่าจะตามมา</strong> จาก context ที่มี ดังนั้น <strong>Prompt ที่ชัด = Context ที่ดี = การทำนายที่แม่นยำ</strong>
       </div>
     </div>
 
@@ -1290,6 +1348,351 @@ function showCompletion() {
 }
 
 // ═══════════════════════════════════════════════════════
+//  LLM TOKEN PREDICTION SIMULATOR
+// ═══════════════════════════════════════════════════════
+const llmScenarios = [
+  {
+    label: '📝 Commit Msg',
+    start: 'feat(controller):',
+    steps: [
+      { candidates: [
+        { token: ' add',    prob: 0.58, why: '"add" เป็น imperative verb ที่พบบ่อยที่สุดหลัง feat:' },
+        { token: ' update', prob: 0.20, why: '"update" พบบ่อยเมื่อแก้ feature ที่มีอยู่' },
+        { token: ' fix',    prob: 0.12, why: '"fix" มักตามหลัง feat แต่ semantic ซ้อนกับ fix: type' },
+        { token: ' remove', prob: 0.06, why: '"remove" น้อยกว่า เพราะ feat ส่วนใหญ่หมายถึงเพิ่ม' },
+        { token: ' create', prob: 0.04, why: '"create" พบน้อยกว่า "add" ใน commit messages' },
+      ]},
+      { candidates: [
+        { token: ' login',    prob: 0.45, why: 'login เป็น feature ที่พบบ่อยใน web apps' },
+        { token: ' order',    prob: 0.22, why: 'order/cart เป็น domain ทั่วไปใน e-commerce' },
+        { token: ' user',     prob: 0.15, why: 'user management เป็น feature พื้นฐาน' },
+        { token: ' auth',     prob: 0.11, why: 'auth เป็นคำย่อ login — น้อยกว่า login' },
+        { token: ' payment',  prob: 0.07, why: 'payment feature พบน้อยกว่า login' },
+      ]},
+      { candidates: [
+        { token: ' controller', prob: 0.72, why: 'scope ระบุว่า controller → "login controller" สมเหตุสมผล' },
+        { token: ' endpoint',   prob: 0.13, why: 'endpoint เป็น synonym แต่ scope บอก controller แล้ว' },
+        { token: ' api',        prob: 0.08, why: 'api คลุมเครือกว่า — บ่งบอก layer ไม่ชัด' },
+        { token: ' service',    prob: 0.05, why: 'service อยู่คนละ layer กับ controller' },
+        { token: ' route',      prob: 0.02, why: 'route เป็น .NET จำเพาะ — น้อยกว่า controller' },
+      ]},
+      { candidates: [
+        { token: '\n',     prob: 0.73, why: 'commit message ควรกระชับ — จบที่บรรทัดเดียว' },
+        { token: ' and',   prob: 0.14, why: '"and" บ่งบอก commit มีหลายเรื่อง — ควรแยก commit' },
+        { token: ' with',  prob: 0.08, why: '"with" เพิ่มรายละเอียดเล็กน้อย' },
+        { token: ' for',   prob: 0.03, why: '"for" เพิ่ม reason — ยาวกว่าที่ควร' },
+        { token: '\n\n',   prob: 0.02, why: 'บรรทัดว่างคั่น — ใช้สำหรับ body ที่ยาว' },
+      ]},
+    ]
+  },
+  {
+    label: '🔷 C# Method',
+    start: '/// <summary>\n/// Get all orders\n/// </summary>\n[HttpGet(Name = "GetOrders")]\npublic async Task<',
+    steps: [
+      { candidates: [
+        { token: 'IActionResult',  prob: 0.48, why: 'IActionResult ยืดหยุ่นกว่า — return ได้ทุก status code' },
+        { token: 'ActionResult',   prob: 0.35, why: 'ActionResult<T> เหมาะถ้า return type ชัดเจน' },
+        { token: 'ServiceResponse', prob: 0.10, why: 'custom wrapper สำหรับ consistent API response' },
+        { token: 'List',           prob: 0.05, why: 'return List ตรงๆ ไม่มี HTTP context' },
+        { token: 'IEnumerable',    prob: 0.02, why: 'IEnumerable พบในบาง pattern' },
+      ]},
+      { candidates: [
+        { token: '>',                     prob: 0.80, why: 'ปิด generic type — IActionResult ไม่ต้อง type parameter' },
+        { token: '<ServiceResponse<List', prob: 0.12, why: 'wrapper สำหรับ wrap list กับ metadata' },
+        { token: '<OrderDto>>',           prob: 0.06, why: 'ระบุ return type ชัดเจนกว่า' },
+        { token: '<string>',             prob: 0.02, why: 'return string — พบในบาง simple endpoint' },
+      ]},
+      { candidates: [
+        { token: ' GetOrders',    prob: 0.78, why: 'ชื่อ method ตรงกับ [HttpGet(Name="GetOrders")]' },
+        { token: ' GetAll',       prob: 0.12, why: '"GetAll" เป็นชื่อ generic พบบ่อยใน CRUD' },
+        { token: ' GetOrderList', prob: 0.07, why: 'verbose กว่า — พบน้อยกว่า' },
+        { token: ' Fetch',        prob: 0.02, why: '"Fetch" ไม่ใช่ .NET convention' },
+        { token: ' Retrieve',     prob: 0.01, why: '"Retrieve" พบน้อยมากใน .NET code' },
+      ]},
+      { candidates: [
+        { token: '()',                     prob: 0.62, why: 'no parameter — GET all ไม่ต้องการ input' },
+        { token: '([FromQuery] FilterDto', prob: 0.24, why: 'filter/pagination parameter พบบ่อยใน list endpoint' },
+        { token: '(CancellationToken',     prob: 0.10, why: 'cancellation support สำหรับ long operation' },
+        { token: '(int page,',             prob: 0.04, why: 'pagination แบบ simple' },
+      ]},
+    ]
+  },
+  {
+    label: '🐍 Python API',
+    start: '@router.post(\n    "",\n    response_model=OrderResponse,\n    status_code=status.HTTP_201_CREATED,\n)\nasync def ',
+    steps: [
+      { candidates: [
+        { token: 'create_order',  prob: 0.68, why: '"create_" prefix บ่งบอก action ชัดเจน + snake_case ถูก' },
+        { token: 'create',        prob: 0.15, why: 'สั้นกว่าแต่ generic เกินไป' },
+        { token: 'add_order',     prob: 0.10, why: '"add_" พบน้อยกว่า "create_" ใน FastAPI code' },
+        { token: 'post_order',    prob: 0.05, why: '"post_" ไม่ใช่ convention — ซ้อนกับ HTTP method' },
+        { token: 'make_order',    prob: 0.02, why: '"make_" informal มากกว่า "create_"' },
+      ]},
+      { candidates: [
+        { token: '(\n    body',    prob: 0.65, why: 'body เป็นชื่อ parameter request body ที่พบบ่อย' },
+        { token: '(\n    request', prob: 0.20, why: '"request" ก็ถูกต้อง แต่ชนกับ FastAPI Request object' },
+        { token: '(\n    data',    prob: 0.10, why: '"data" generic เกินไป' },
+        { token: '(',              prob: 0.05, why: 'ยัด parameters ในบรรทัดเดียว — อ่านยาก' },
+      ]},
+      { candidates: [
+        { token: ': CreateOrderRequest', prob: 0.75, why: 'Pydantic model ที่ตรงกับ action — SSD convention: Request suffix' },
+        { token: ': OrderCreate',        prob: 0.14, why: 'รูปแบบ alternative — noun+verb' },
+        { token: ': dict',               prob: 0.07, why: 'ไม่มี type safety — FastAPI ไม่แนะนำ' },
+        { token: ': Any',               prob: 0.04, why: 'ห้ามใช้ Any ตาม SSD Python standard' },
+      ]},
+      { candidates: [
+        { token: ',\n    user',     prob: 0.58, why: '"user" dependency เพื่อ auth — inject ด้วย Depends(get_current_user)' },
+        { token: ',\n    session',  prob: 0.22, why: 'inject DB session ตรงใน router — ไม่แนะนำ ควรผ่าน service' },
+        { token: ',\n    service',  prob: 0.15, why: 'inject application service — SSD pattern ที่ถูกต้อง' },
+        { token: '\n)',             prob: 0.05, why: 'ไม่มี dependency — route ที่ไม่ต้องการ auth หรือ service' },
+      ]},
+    ]
+  },
+];
+
+// Simulator state
+let llmSim = {
+  scenarioIdx: 0,
+  stepIdx: 0,
+  builtText: '',
+  temp: 0.7,
+  autoTimer: null,
+  done: false,
+};
+
+function llmSelectScenario(i) {
+  clearInterval(llmSim.autoTimer);
+  llmSim.autoTimer = null;
+  document.getElementById('llmAutoBtn').textContent = '▶ Auto Play';
+  document.getElementById('llmAutoBtn').classList.remove('bg-green-700');
+  document.getElementById('llmAutoBtn').classList.add('bg-gray-800');
+
+  llmSim.scenarioIdx = i;
+  llmSim.stepIdx = 0;
+  llmSim.builtText = llmScenarios[i].start;
+  llmSim.done = false;
+
+  document.querySelectorAll('.llms-btn').forEach((b, idx) => {
+    b.className = `llms-btn px-3 py-1.5 rounded-lg text-xs border ${
+      idx === i
+        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300 font-medium'
+        : 'border-gray-700 text-gray-500'
+    }`;
+  });
+
+  llmRenderContext();
+  llmRenderBars();
+  document.getElementById('llmExplain').innerHTML = '<span class="text-gray-600">กด ⚡ Pick Best หรือ 🎲 Surprise Me เพื่อดูว่า AI เลือก token อะไรถัดไป</span>';
+}
+
+function llmRenderContext() {
+  const el = document.getElementById('llmContext');
+  const text = llmSim.builtText;
+  // Highlight last added token
+  const base = llmScenarios[llmSim.scenarioIdx].start;
+  const added = text.slice(base.length);
+  if (added) {
+    el.innerHTML = escapeHtml(base) +
+      added.split('').map((ch, i) =>
+        i === 0 ? `<span class="bg-indigo-500/30 text-indigo-200 rounded px-0.5">${escapeHtml(ch)}</span>` :
+        `<span class="bg-indigo-500/10 text-indigo-300">${escapeHtml(ch)}</span>`
+      ).join('');
+  } else {
+    el.textContent = base;
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'↵\n');
+}
+
+function llmTempAdjust(probs, temp) {
+  if (temp <= 0.1) {
+    // Deterministic: max → 0.99, rest share 0.01
+    const maxI = probs.indexOf(Math.max(...probs));
+    return probs.map((p, i) => i === maxI ? 0.99 : 0.01 / (probs.length - 1));
+  }
+  // Apply temperature scaling then re-normalize
+  const scaled = probs.map(p => Math.pow(p, 1 / temp));
+  const sum = scaled.reduce((a, b) => a + b, 0);
+  return scaled.map(p => p / sum);
+}
+
+function llmRenderBars() {
+  const sc = llmScenarios[llmSim.scenarioIdx];
+  const barsDiv = document.getElementById('llmBars');
+  const stepLabel = document.getElementById('llmStepLabel');
+
+  if (llmSim.done || llmSim.stepIdx >= sc.steps.length) {
+    barsDiv.innerHTML = `<div class="text-center py-4"><span class="text-green-400 text-sm">✅ Generation complete!</span><br><span class="text-gray-500 text-xs mt-1 block">กด ↺ Reset เพื่อเริ่มใหม่</span></div>`;
+    stepLabel.textContent = 'เสร็จแล้ว';
+    document.getElementById('llmBestBtn').disabled = true;
+    document.getElementById('llmSurpriseBtn').disabled = true;
+    return;
+  }
+
+  document.getElementById('llmBestBtn').disabled = false;
+  document.getElementById('llmSurpriseBtn').disabled = false;
+
+  const step = sc.steps[llmSim.stepIdx];
+  const rawProbs = step.candidates.map(c => c.prob);
+  const adjProbs = llmTempAdjust(rawProbs, llmSim.temp);
+  const total = sc.steps.length;
+
+  stepLabel.textContent = `ขั้นที่ ${llmSim.stepIdx + 1}/${total}`;
+
+  const barColors = [
+    'from-indigo-500 to-indigo-400',
+    'from-blue-500 to-blue-400',
+    'from-cyan-600 to-cyan-500',
+    'from-violet-600 to-violet-500',
+    'from-slate-600 to-slate-500',
+  ];
+
+  barsDiv.innerHTML = step.candidates.map((c, i) => {
+    const pct = Math.round(adjProbs[i] * 100);
+    const pctRaw = Math.round(rawProbs[i] * 100);
+    const isBest = i === 0;
+    return `
+      <div class="cursor-pointer group" onclick="llmPickSpecific(${i})">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="mono text-xs w-32 truncate ${isBest ? 'text-indigo-300 font-semibold' : 'text-gray-400'}"
+            title="${c.token}">"${c.token.replace(/\n/g,'↵')}"</span>
+          <span class="text-xs ${isBest ? 'text-indigo-400' : 'text-gray-500'} ml-auto">${pct}%</span>
+          ${llmSim.temp !== 0.7 ? `<span class="text-xs text-gray-600">(原${pctRaw}%)</span>` : ''}
+        </div>
+        <div class="h-5 bg-gray-800 rounded-full overflow-hidden group-hover:ring-1 group-hover:ring-indigo-400 transition">
+          <div class="h-full bg-gradient-to-r ${barColors[i]} rounded-full flex items-center justify-end pr-1.5 transition-all duration-700"
+            style="width:${pct}%; min-width:${pct>0?'4px':'0'}">
+            ${isBest ? '<span class="text-white text-xs">★</span>' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function llmPickToken(mode) {
+  const sc = llmScenarios[llmSim.scenarioIdx];
+  if (llmSim.stepIdx >= sc.steps.length) return;
+
+  const step = sc.steps[llmSim.stepIdx];
+  const rawProbs = step.candidates.map(c => c.prob);
+  const adjProbs = llmTempAdjust(rawProbs, llmSim.temp);
+
+  let picked;
+  if (mode === 'best') {
+    picked = 0; // always top
+  } else {
+    // Weighted random based on temp-adjusted probs
+    const r = Math.random();
+    let cum = 0;
+    picked = adjProbs.length - 1;
+    for (let i = 0; i < adjProbs.length; i++) {
+      cum += adjProbs[i];
+      if (r < cum) { picked = i; break; }
+    }
+    // Ensure it's not always best when temp is low
+    if (llmSim.temp < 0.5 && picked === 0 && adjProbs.length > 1) picked = 1;
+  }
+
+  llmApplyToken(picked);
+}
+
+function llmPickSpecific(i) {
+  llmApplyToken(i);
+}
+
+function llmApplyToken(i) {
+  const sc = llmScenarios[llmSim.scenarioIdx];
+  const step = sc.steps[llmSim.stepIdx];
+  const candidate = step.candidates[i];
+
+  // Add to context
+  llmSim.builtText += candidate.token;
+  llmSim.stepIdx++;
+
+  // Show explanation
+  const rawProbs = step.candidates.map(c => c.prob);
+  const adjProbs = llmTempAdjust(rawProbs, llmSim.temp);
+  const pct = Math.round(adjProbs[i] * 100);
+  const isBest = i === 0;
+  const rank = ['อันดับ 1 🏆','อันดับ 2','อันดับ 3','อันดับ 4','อันดับ 5'][i];
+
+  document.getElementById('llmExplain').innerHTML = `
+    <div class="space-y-1.5">
+      <div><span class="text-gray-300 font-medium">เลือก:</span>
+        <span class="mono text-indigo-300 ml-1">"${candidate.token.replace(/\n/g,'↵')}"</span>
+        <span class="text-gray-500 ml-1">(${rank} — ${pct}%)</span>
+      </div>
+      <div class="text-gray-400 leading-relaxed">${candidate.why}</div>
+      ${!isBest && llmSim.temp > 1.0 ? '<div class="text-amber-400 text-xs mt-1">⚠️ Temperature สูง — AI เลือก token ที่ไม่น่าเป็นไปได้มากที่สุด ผลลัพธ์อาจออกนอก pattern</div>' : ''}
+      ${isBest ? '<div class="text-green-400 text-xs mt-1">✅ Best pick — AI เลือก token ที่น่าจะตามมามากที่สุด</div>' : ''}
+    </div>
+  `;
+
+  if (llmSim.stepIdx >= sc.steps.length) {
+    llmSim.done = true;
+    clearInterval(llmSim.autoTimer);
+    llmSim.autoTimer = null;
+    document.getElementById('llmAutoBtn').textContent = '▶ Auto Play';
+  }
+
+  llmRenderContext();
+  llmRenderBars();
+}
+
+function llmToggleAuto() {
+  const btn = document.getElementById('llmAutoBtn');
+  if (llmSim.autoTimer) {
+    clearInterval(llmSim.autoTimer);
+    llmSim.autoTimer = null;
+    btn.textContent = '▶ Auto Play';
+    btn.classList.remove('bg-green-700');
+    btn.classList.add('bg-gray-800');
+  } else {
+    if (llmSim.done) llmReset();
+    btn.textContent = '⏸ Pause';
+    btn.classList.remove('bg-gray-800');
+    btn.classList.add('bg-green-700');
+    llmSim.autoTimer = setInterval(() => {
+      if (llmSim.done) {
+        clearInterval(llmSim.autoTimer);
+        llmSim.autoTimer = null;
+        btn.textContent = '▶ Auto Play';
+        btn.classList.remove('bg-green-700');
+        btn.classList.add('bg-gray-800');
+        return;
+      }
+      llmPickToken('best');
+    }, 1400);
+  }
+}
+
+function llmReset() {
+  clearInterval(llmSim.autoTimer);
+  llmSim.autoTimer = null;
+  document.getElementById('llmAutoBtn').textContent = '▶ Auto Play';
+  document.getElementById('llmAutoBtn').classList.remove('bg-green-700');
+  document.getElementById('llmAutoBtn').classList.add('bg-gray-800');
+  llmSelectScenario(llmSim.scenarioIdx);
+}
+
+function llmUpdateTemp(val) {
+  llmSim.temp = val / 10;
+  document.getElementById('llmTempValue').textContent = llmSim.temp.toFixed(1);
+  const hints = {
+    low:  'Temperature ต่ำ: AI เลือก token ที่มี probability สูงสุดเสมอ — ผลลัพธ์คาดเดาได้ แต่ซ้ำๆ',
+    mid:  'Temperature 0.7: ผสมระหว่าง predictable และ creative — ค่า default ที่นิยมใช้',
+    high: 'Temperature สูง: AI สุ่มมากขึ้น อาจได้ผลลัพธ์ creative แต่อาจ error ได้',
+  };
+  const hintEl = document.getElementById('llmTempHint');
+  hintEl.textContent = `Temperature ${llmSim.temp.toFixed(1)}: ${llmSim.temp < 0.5 ? hints.low : llmSim.temp < 1.2 ? hints.mid : hints.high}`;
+  hintEl.className = `mt-2 text-xs p-2 rounded-lg ${llmSim.temp < 0.5 ? 'bg-blue-900/30 text-blue-300' : llmSim.temp < 1.2 ? 'bg-gray-800 text-gray-400' : 'bg-red-900/30 text-red-300'}`;
+  llmRenderBars(); // Re-render with new temp
+}
+
+// ═══════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
@@ -1299,6 +1702,7 @@ document.addEventListener('DOMContentLoaded', () => {
   selectCommitScenario(0);
   renderBranchQuiz();
   document.getElementById('commitScenarioText').textContent = commitScenarios[0].text;
+  llmSelectScenario(0);
 });
 </script>
 </body>
