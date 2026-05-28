@@ -26,6 +26,7 @@ npx skills add <github-repo-url>/skills/<skill-name>
 | `ssd-database` | กำหนดชื่อ database objects, EF Core Reverse Engineer |
 | `ssd-git-commit` | เขียน commit message, semantic versioning |
 | `ssd-git-flow` | Git Flow workflow, branch naming, pull request |
+| `ssd-lineoa-contact` | ติดตั้ง LineOAPA.Shared.dll, เชื่อมต่อ Line OA contact ผ่าน MassTransit RabbitMQ |
 
 ## อ้างอิง
 
