@@ -31,6 +31,8 @@ npx skills add <github-repo-url>/skills/<skill-name>
 | `ssd-backend-review` | ตรวจสอบ code C#/.NET ว่าตรง SSD standard — รายงาน violations พร้อม file:line |
 | `ssd-frontend-refactor` | แก้ไข .tsx/.ts ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + TypeScript compile check |
 | `ssd-backend-refactor` | แก้ไข .cs ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + dotnet build check |
+| `ssd-bug-std-auth-redirect-loop` | แก้ bug หน้าขาว / redirect loop หลัง login (oidc-client-ts, react-ts-template-2023) |
+| `ssd-bug-std-version-checker` | แก้ bug ไม่เห็น version ใหม่หลัง deploy — JS chunk cache + VersionChecker race condition |
 
 ## อ้างอิง
 
