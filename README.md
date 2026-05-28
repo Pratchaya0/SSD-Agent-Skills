@@ -33,6 +33,9 @@ npx skills add <github-repo-url>/skills/<skill-name>
 | `ssd-backend-refactor` | แก้ไข .cs ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + dotnet build check |
 | `ssd-bug-std-auth-redirect-loop` | แก้ bug หน้าขาว / redirect loop หลัง login (oidc-client-ts, react-ts-template-2023) |
 | `ssd-bug-std-version-checker` | แก้ bug ไม่เห็น version ใหม่หลัง deploy — JS chunk cache + VersionChecker race condition |
+| `ssd-python-review` | ตรวจสอบ code Python ว่าตรง SSD standard — Architecture, HTTP methods, logging, DB, error handling |
+| `ssd-python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + pytest verify |
+| `ssd-python-starter` | เริ่มต้น Python project ใหม่จาก SSD-Python-Starter-Template — clone, configure, สร้าง bounded context |
 
 ## อ้างอิง
 
