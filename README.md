@@ -27,6 +27,10 @@ npx skills add <github-repo-url>/skills/<skill-name>
 | `ssd-git-commit` | เขียน commit message, semantic versioning |
 | `ssd-git-flow` | Git Flow workflow, branch naming, pull request |
 | `ssd-contact-skill-gen` | แปลง setup document ของ shared library หรือ contact service ใหม่เป็น SKILL.md มาตรฐาน SSD |
+| `ssd-frontend-review` | ตรวจสอบ code React/TypeScript ว่าตรง SSD standard — รายงาน violations พร้อม file:line |
+| `ssd-backend-review` | ตรวจสอบ code C#/.NET ว่าตรง SSD standard — รายงาน violations พร้อม file:line |
+| `ssd-frontend-refactor` | แก้ไข .tsx/.ts ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + TypeScript compile check |
+| `ssd-backend-refactor` | แก้ไข .cs ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + dotnet build check |
 
 ## อ้างอิง
 
