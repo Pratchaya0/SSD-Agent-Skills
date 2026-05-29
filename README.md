@@ -36,6 +36,7 @@ npx skills add <github-repo-url>/skills/<skill-name>
 | `ssd-python-review` | ตรวจสอบ code Python ว่าตรง SSD standard — Architecture, HTTP methods, logging, DB, error handling |
 | `ssd-python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + pytest verify |
 | `ssd-python-starter` | เริ่มต้น Python project ใหม่จาก SSD-Python-Starter-Template — clone, configure, สร้าง bounded context |
+| `ssd-release-it-setup` | ติดตั้ง release-it และตั้งค่า .release-it config ใน project ที่ยังไม่มี — สร้าง CHANGELOG.md + GitHub Draft Release อัตโนมัติ |
 
 ## อ้างอิง
 
