@@ -328,6 +328,291 @@
       </div>
     </div>
 
+    <!-- ── ADVANCED LLM CONCEPTS ACCORDION ── -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
+      <div class="p-6 pb-3 flex items-center gap-2">
+        <span class="text-xl">🔬</span>
+        <h3 class="font-semibold">Advanced LLM Concepts</h3>
+        <span class="ml-auto text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">คลิกเพื่อขยาย</span>
+      </div>
+      <div class="divide-y divide-gray-100">
+
+        <!-- 1. Attention Mechanism -->
+        <div>
+          <button onclick="toggleAccordion('attn')" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🎯</span>
+              <div>
+                <div class="font-medium text-gray-800">Attention Mechanism</div>
+                <div class="text-xs text-gray-400 mt-0.5">Transformer มอง token อื่นๆ อย่างไรขณะ generate</div>
+              </div>
+            </div>
+            <span id="arr-attn" class="text-gray-400 text-sm transition-transform duration-200">▼</span>
+          </button>
+          <div id="panel-attn" class="hidden px-6 pb-6">
+            <p class="text-sm text-gray-700 mb-4">เมื่อ LLM สร้าง token ถัดไป มันไม่ได้มองแค่ token ก่อนหน้า — แต่ <strong>ให้น้ำหนัก (attention weight)</strong> กับทุก token ใน context โดยน้ำหนักสูงหมายถึง token นั้น "สำคัญ" ต่อการทำนายมากกว่า</p>
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+              <p class="text-xs text-gray-500 mb-3">ตัวอย่าง: เมื่อ generate คำถัดไปหลัง "Python ใช้ <strong>def</strong> สำหรับ function ใช่ไหม" — token ที่มี attention สูงจะถูก highlight</p>
+              <div class="flex flex-wrap gap-1.5 items-center">
+                <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono" style="opacity:0.3">Python</span>
+                <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono" style="opacity:0.4">ใช้</span>
+                <span class="px-2 py-1 rounded bg-purple-200 text-purple-900 text-xs font-mono font-bold border-2 border-purple-400">def</span>
+                <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono" style="opacity:0.35">สำหรับ</span>
+                <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono" style="opacity:0.5">function</span>
+                <span class="px-2 py-1 rounded bg-purple-200 text-purple-900 text-xs font-mono font-bold border-2 border-purple-400">ใช่ไหม</span>
+                <span class="text-gray-400 mx-1">→</span>
+                <span class="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-bold">?</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-2">• สีเข้ม/border = attention สูง &nbsp;• สีจาง = attention ต่ำ</p>
+            </div>
+            <div class="bg-indigo-50 rounded-xl p-3 text-sm text-indigo-800">
+              <strong>💡 ทำไมถึงสำคัญ?</strong> Context ที่ดี = token ที่เกี่ยวข้องอยู่ใกล้ๆ = attention แม่นยำ = output ที่ดีขึ้น นี่คือเหตุผลที่ prompt ที่ชัดเจนและสั้นกระชับได้ผลดีกว่า prompt ที่ยาวและฟุ้งซ่าน
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Training vs Fine-tuning vs Prompting -->
+        <div>
+          <button onclick="toggleAccordion('train')" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🏋️</span>
+              <div>
+                <div class="font-medium text-gray-800">Training vs Fine-tuning vs Prompting</div>
+                <div class="text-xs text-gray-400 mt-0.5">3 วิธีปรับพฤติกรรม AI — ต่างกันอย่างไร?</div>
+              </div>
+            </div>
+            <span id="arr-train" class="text-gray-400 text-sm transition-transform duration-200">▼</span>
+          </button>
+          <div id="panel-train" class="hidden px-6 pb-6">
+            <div class="overflow-x-auto rounded-xl border border-gray-100 mb-4">
+              <table class="w-full text-sm border-collapse">
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th class="text-left p-3 font-semibold text-gray-700 border-b border-gray-100">วิธี</th>
+                    <th class="text-left p-3 font-semibold text-gray-700 border-b border-gray-100">ทำอะไร</th>
+                    <th class="text-left p-3 font-semibold text-gray-700 border-b border-gray-100">ต้นทุน</th>
+                    <th class="text-left p-3 font-semibold text-gray-700 border-b border-gray-100">เหมาะกับ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-50">
+                    <td class="p-3 font-medium text-purple-700">Pre-training</td>
+                    <td class="p-3 text-gray-600 text-xs">เรียนรู้ภาษาจาก internet ทั้งหมด ปรับ weights ทุกตัว</td>
+                    <td class="p-3 text-red-600 font-medium text-xs">$$$$ (หลายล้าน)</td>
+                    <td class="p-3 text-gray-600 text-xs">Anthropic, OpenAI เท่านั้น</td>
+                  </tr>
+                  <tr class="border-b border-gray-50 bg-blue-50/30">
+                    <td class="p-3 font-medium text-blue-700">Fine-tuning</td>
+                    <td class="p-3 text-gray-600 text-xs">ฝึกต่อด้วย domain data เล็กๆ ปรับ weights บางส่วน</td>
+                    <td class="p-3 text-amber-600 font-medium text-xs">$$ (หลักพัน)</td>
+                    <td class="p-3 text-gray-600 text-xs">บริษัทที่มี data เฉพาะทาง</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-medium text-green-700">Prompting</td>
+                    <td class="p-3 text-gray-600 text-xs">ให้ instructions ใน context ไม่แก้ weights เลย</td>
+                    <td class="p-3 text-green-600 font-medium text-xs">$ (แทบฟรี)</td>
+                    <td class="p-3 text-gray-600 text-xs"><strong>พวกเราทุกคน!</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bg-green-50 border border-green-100 rounded-xl p-3 text-sm text-green-800">
+              <strong>✅ SSD Skills = Prompting</strong> — เราไม่ต้อง train model ใหม่ แค่ inject context + instructions ที่ดีผ่าน SKILL.md ก็ทำให้ AI ทำงานตาม standard SSD ได้ทันที
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. RAG -->
+        <div>
+          <button onclick="toggleAccordion('rag')" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🔍</span>
+              <div>
+                <div class="font-medium text-gray-800">RAG — Retrieval-Augmented Generation</div>
+                <div class="text-xs text-gray-400 mt-0.5">ให้ AI เข้าถึงข้อมูลนอก training data แบบ real-time</div>
+              </div>
+            </div>
+            <span id="arr-rag" class="text-gray-400 text-sm transition-transform duration-200">▼</span>
+          </button>
+          <div id="panel-rag" class="hidden px-6 pb-6">
+            <p class="text-sm text-gray-700 mb-4">LLM มี knowledge cutoff — รู้แค่สิ่งที่อยู่ใน training data RAG แก้ปัญหานี้ด้วยการ <strong>ดึงข้อมูลสด</strong> ใส่เข้า context ก่อน generate ทำให้ AI ตอบได้แม่นยำโดยไม่ต้อง retrain</p>
+            <div class="flex items-center gap-2 mb-4 overflow-x-auto pb-1 flex-wrap">
+              <div class="bg-indigo-100 text-indigo-800 rounded-xl px-3 py-2 text-xs font-medium text-center">👤 User<br>Query</div>
+              <span class="text-gray-400 flex-shrink-0">→</span>
+              <div class="bg-purple-100 text-purple-800 rounded-xl px-3 py-2 text-xs font-medium text-center">🔎 Vector<br>Search</div>
+              <span class="text-gray-400 flex-shrink-0">→</span>
+              <div class="bg-cyan-100 text-cyan-800 rounded-xl px-3 py-2 text-xs font-medium text-center">📄 Relevant<br>Docs</div>
+              <span class="text-gray-400 flex-shrink-0">→</span>
+              <div class="bg-amber-100 text-amber-800 rounded-xl px-3 py-2 text-xs font-medium text-center">🧠 LLM +<br>Context</div>
+              <span class="text-gray-400 flex-shrink-0">→</span>
+              <div class="bg-green-100 text-green-800 rounded-xl px-3 py-2 text-xs font-medium text-center">✅ Grounded<br>Answer</div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+              <div class="bg-gray-50 rounded-xl p-3">
+                <div class="font-medium mb-2 text-xs">ตัวอย่าง Use Case</div>
+                <ul class="text-gray-600 space-y-1 text-xs">
+                  <li>• Claude Code → embed codebase เป็น context</li>
+                  <li>• Chatbot บริษัท → ดึง FAQ/policy ล่าสุด</li>
+                  <li>• Legal AI → ดึงกฎหมายที่เกี่ยวข้อง</li>
+                </ul>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-3">
+                <div class="font-medium mb-2 text-xs">RAG vs Fine-tuning</div>
+                <ul class="text-gray-600 space-y-1 text-xs">
+                  <li>✅ ข้อมูล real-time ไม่ต้อง retrain</li>
+                  <li>✅ เพิ่ม/ลบ knowledge ได้ทันที</li>
+                  <li>✅ ถูกกว่า fine-tuning มาก</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Hallucination -->
+        <div>
+          <button onclick="toggleAccordion('halluc')" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">⚠️</span>
+              <div>
+                <div class="font-medium text-gray-800">Hallucination — เมื่อ AI แต่งเรื่อง</div>
+                <div class="text-xs text-gray-400 mt-0.5">สาเหตุ วิธีตรวจสอบ และวิธีป้องกัน</div>
+              </div>
+            </div>
+            <span id="arr-halluc" class="text-gray-400 text-sm transition-transform duration-200">▼</span>
+          </button>
+          <div id="panel-halluc" class="hidden px-6 pb-6">
+            <div class="bg-red-50 border border-red-100 rounded-xl p-3 mb-4 text-sm text-red-800">
+              <strong>⚠️ สาเหตุหลัก:</strong> LLM ทำนาย token ที่ "น่าจะตามมา" — ไม่ใช่ "รู้" ความจริง ถ้า context ไม่มีข้อมูลที่ถูกต้อง มันจะ generate สิ่งที่ฟัง "สมเหตุสมผล" แต่ผิดจริง
+            </div>
+            <div class="grid md:grid-cols-2 gap-4 mb-4 text-sm">
+              <div>
+                <div class="font-medium mb-2 text-red-600">Prompt ที่เสี่ยง</div>
+                <div class="bg-red-50 rounded-xl p-3 mono text-xs text-red-700">
+                  "บอกฉันเกี่ยวกับ library X<br>version 5.0 ที่ออกเมื่อเดือนที่แล้ว"
+                </div>
+                <p class="text-xs text-gray-500 mt-1">❌ ถาม fact ที่อาจไม่อยู่ใน training data</p>
+              </div>
+              <div>
+                <div class="font-medium mb-2 text-green-600">Prompt ที่ป้องกัน</div>
+                <div class="bg-green-50 rounded-xl p-3 mono text-xs text-green-700">
+                  "จาก CHANGELOG นี้ [paste]<br>อธิบาย X — ถ้าไม่แน่ใจ<br>บอกว่าไม่แน่ใจ ไม่ต้องเดา"
+                </div>
+                <p class="text-xs text-gray-500 mt-1">✅ ให้ context จริง + permission ให้ปฏิเสธ</p>
+              </div>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="font-medium text-gray-700">วิธีลด Hallucination:</div>
+              <div class="flex items-start gap-2 text-sm"><span class="text-green-500 flex-shrink-0">✅</span><span class="text-gray-700">ให้ context/ข้อมูลจริงแนบไปด้วย ไม่ต้องพึ่ง memory ของ AI</span></div>
+              <div class="flex items-start gap-2 text-sm"><span class="text-green-500 flex-shrink-0">✅</span><span class="text-gray-700">บอกให้ AI cite source: "อ้างอิง line number ที่เกี่ยวข้อง"</span></div>
+              <div class="flex items-start gap-2 text-sm"><span class="text-green-500 flex-shrink-0">✅</span><span class="text-gray-700">ให้ permission ปฏิเสธ: "ถ้าไม่รู้ให้บอก ไม่ต้องเดา"</span></div>
+              <div class="flex items-start gap-2 text-sm"><span class="text-green-500 flex-shrink-0">✅</span><span class="text-gray-700">Verify output เสมอ โดยเฉพาะ fact ที่ตรวจสอบได้</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── ADVANCED PROMPT TECHNIQUES ── -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
+      <div class="p-6 pb-4">
+        <h3 class="font-semibold mb-1">🧪 Advanced Prompt Techniques</h3>
+        <p class="text-sm text-gray-500">3 เทคนิคที่ช่วยให้ AI ตอบได้แม่นยำและลึกขึ้น</p>
+      </div>
+      <div class="flex gap-1.5 px-6 mb-5 flex-wrap">
+        <button onclick="selectTechnique(0)" id="tech0" class="tech-tab px-4 py-2 rounded-lg text-sm font-medium border-2 border-indigo-500 bg-indigo-50 text-indigo-700">📋 Few-shot</button>
+        <button onclick="selectTechnique(1)" id="tech1" class="tech-tab px-4 py-2 rounded-lg text-sm font-medium border-2 border-gray-200 text-gray-500">🔗 Chain-of-Thought</button>
+        <button onclick="selectTechnique(2)" id="tech2" class="tech-tab px-4 py-2 rounded-lg text-sm font-medium border-2 border-gray-200 text-gray-500">🎭 Role Prompting</button>
+      </div>
+      <div class="px-6 pb-6">
+
+        <!-- Few-shot panel -->
+        <div id="tech-panel-0" class="fade-in">
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-sm text-gray-700 mb-3"><strong>Few-shot prompting</strong> คือการให้ <strong>ตัวอย่าง input→output 2-3 ชุด</strong> ก่อน task จริง AI จะเรียนรู้ pattern จากตัวอย่างและทำตาม format ที่ต้องการ</p>
+              <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 mb-3">
+                <strong>เหมาะกับ:</strong> งาน format-sensitive เช่น commit messages, review reports, naming conventions
+              </div>
+              <div class="bg-indigo-50 rounded-xl p-3 text-xs text-indigo-800">
+                <strong>SSD ใช้ยังไง:</strong> SKILL.md ของ ssd-git-commit ฝังตัวอย่าง commit pattern ไว้ — นี่คือ few-shot prompting ที่อยู่ใน skill
+              </div>
+            </div>
+            <div class="bg-gray-900 rounded-xl p-4 mono text-xs overflow-auto">
+              <div class="text-gray-400 mb-2"># สอน AI เขียน commit message</div>
+              <div class="text-green-300">Input: เพิ่ม login form ใน React</div>
+              <div class="text-cyan-300">Output: feat(controller): add login form</div>
+              <div class="text-gray-600 my-1">---</div>
+              <div class="text-green-300">Input: แก้ bug ราคาคำนวณผิด</div>
+              <div class="text-cyan-300">Output: fix(service): fix price calculation</div>
+              <div class="text-gray-600 my-1">---</div>
+              <div class="text-yellow-300">Input: เพิ่มหน้า dashboard สำหรับ admin</div>
+              <div class="text-white">Output: <span class="opacity-75">feat(controller): add admin dashboard</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chain-of-Thought panel -->
+        <div id="tech-panel-1" class="hidden fade-in">
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-sm text-gray-700 mb-3"><strong>Chain-of-Thought (CoT)</strong> คือการให้ AI <strong>คิดทีละขั้นตอนก่อนตอบ</strong> วลีง่ายๆ เช่น "วิเคราะห์ก่อน" หรือ "คิดทีละขั้น" ช่วยให้ AI แก้ปัญหาซับซ้อนได้แม่นยำขึ้น</p>
+              <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 mb-3">
+                <strong>เหมาะกับ:</strong> debug, root cause analysis, architecture decisions, refactoring ซับซ้อน
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-red-50 rounded-xl p-2.5">
+                  <div class="font-medium text-red-700 mb-1">❌ ไม่ใช้ CoT</div>
+                  <div class="text-gray-600">"แก้ redirect loop" → AI เดาแก้ อาจผิด</div>
+                </div>
+                <div class="bg-green-50 rounded-xl p-2.5">
+                  <div class="font-medium text-green-700 mb-1">✅ ใช้ CoT</div>
+                  <div class="text-gray-600">"วิเคราะห์ flow ก่อน แล้วเสนอ fix" → เข้าใจ root cause</div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-gray-900 rounded-xl p-4 mono text-xs overflow-auto">
+              <div class="text-gray-400 mb-2"># Chain-of-Thought: debug auth issue</div>
+              <div class="text-yellow-300">ก่อนตอบ วิเคราะห์ทีละขั้น:</div>
+              <div class="text-gray-300 mt-1">1. อธิบาย flow ปัจจุบันของ code</div>
+              <div class="text-gray-300">2. ระบุ point ที่อาจเกิด loop</div>
+              <div class="text-gray-300">3. เสนอ fix พร้อมเหตุผล</div>
+              <div class="text-gray-300">4. ระบุ edge cases</div>
+              <div class="text-gray-600 mt-2">Code: [paste AuthProvider.tsx]</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Prompting panel -->
+        <div id="tech-panel-2" class="hidden fade-in">
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-sm text-gray-700 mb-3"><strong>Role Prompting</strong> คือการกำหนด <strong>บทบาท/persona</strong> ให้ AI ก่อนทำงาน AI จะปรับ tone, depth, และ perspective ตาม role ที่กำหนด</p>
+              <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 mb-3">
+                <strong>เหมาะกับ:</strong> code review, architecture review, ต้องการ feedback ที่ strict ตาม standard
+              </div>
+              <div class="bg-indigo-50 rounded-xl p-3 text-xs text-indigo-800">
+                <strong>SSD ใช้ยังไง:</strong> skills ทุกตัว set role ใน context — ssd-backend-review กำหนดให้ AI เป็น "Senior .NET developer ที่รู้ SSD standards"
+              </div>
+            </div>
+            <div class="space-y-2">
+              <div class="bg-red-50 border border-red-100 rounded-xl p-3 mono text-xs">
+                <div class="text-red-600 font-medium mb-1">❌ ไม่มี role</div>
+                <div class="text-gray-600">"review code นี้ให้หน่อย"</div>
+                <div class="text-gray-400 mt-1">→ feedback ทั่วไป ไม่ strict ตาม SSD</div>
+              </div>
+              <div class="bg-green-50 border border-green-100 rounded-xl p-3 mono text-xs">
+                <div class="text-green-600 font-medium mb-1">✅ มี role</div>
+                <div class="text-gray-700">"You are Senior SSD Developer<br>ที่เข้มงวดกับ TypeScript standards<br>ห้ามผ่าน code ที่มี `any` type<br>Form ต้องใช้ Formik เท่านั้น"</div>
+                <div class="text-gray-400 mt-1">→ feedback ตรงตาม SSD standard ทุกข้อ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ── LAB 1: Prompt Quality Simulator ── -->
     <div class="lab-card bg-white rounded-2xl p-6 shadow-sm mb-4">
       <div class="flex items-center gap-3 mb-4">
@@ -477,12 +762,12 @@
         <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">🔷 Backend (.NET/C#)</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-backend-setup</div><div class="text-xs text-gray-400 mt-0.5">VS2022, EF Core, folder structure</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-dotnet-controller</div><div class="text-xs text-gray-400 mt-0.5">Route, HTTP methods, auth</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-dotnet-service</div><div class="text-xs text-gray-400 mt-0.5">Service, DTO, AutoMapper</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-dotnet-infra</div><div class="text-xs text-gray-400 mt-0.5">Serilog, Quartz, RestSharp</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-backend-review</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review .cs violations</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition"><div class="font-medium text-gray-700">ssd-backend-refactor</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + build</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition cursor-pointer" onclick="showSkillDetail('backend-setup')"><div class="font-medium text-gray-700">ssd-backend-setup</div><div class="text-xs text-gray-400 mt-0.5">VS2022, EF Core, folder structure</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition cursor-pointer" onclick="showSkillDetail('dotnet-controller')"><div class="font-medium text-gray-700">ssd-dotnet-controller</div><div class="text-xs text-gray-400 mt-0.5">Route, HTTP methods, auth</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition cursor-pointer" onclick="showSkillDetail('dotnet-service')"><div class="font-medium text-gray-700">ssd-dotnet-service</div><div class="text-xs text-gray-400 mt-0.5">Service, DTO, AutoMapper</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition cursor-pointer" onclick="showSkillDetail('dotnet-infra')"><div class="font-medium text-gray-700">ssd-dotnet-infra</div><div class="text-xs text-gray-400 mt-0.5">Serilog, Quartz, RestSharp</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition cursor-pointer" onclick="showSkillDetail('backend-review')"><div class="font-medium text-gray-700">ssd-backend-review</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review .cs violations</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-blue-300 transition cursor-pointer" onclick="showSkillDetail('backend-refactor')"><div class="font-medium text-gray-700">ssd-backend-refactor</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + build</div></div>
       </div>
     </div>
 
@@ -492,9 +777,9 @@
         <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">🐍 Python (FastAPI)</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition"><div class="font-medium text-gray-700">ssd-python-starter</div><div class="text-xs text-gray-400 mt-0.5">Clone template, create context</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition"><div class="font-medium text-gray-700">ssd-python-review</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review .py violations</div></div>
-        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition"><div class="font-medium text-gray-700">ssd-python-refactor</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + pytest</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition cursor-pointer" onclick="showSkillDetail('python-starter')"><div class="font-medium text-gray-700">ssd-python-starter</div><div class="text-xs text-gray-400 mt-0.5">Clone template, create context</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition cursor-pointer" onclick="showSkillDetail('python-review')"><div class="font-medium text-gray-700">ssd-python-review</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔍 Review .py violations</div></div>
+        <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm hover:border-yellow-300 transition cursor-pointer" onclick="showSkillDetail('python-refactor')"><div class="font-medium text-gray-700">ssd-python-refactor</div><div class="text-xs text-gray-400 mt-0.5 text-indigo-500">🔧 Safe refactor + pytest</div></div>
       </div>
     </div>
 
@@ -505,9 +790,9 @@
           <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">🗄️ Database + Git</span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-database</div><div class="text-xs text-gray-400 mt-0.5">SQL naming, EF Core</div></div>
-          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-git-commit</div><div class="text-xs text-gray-400 mt-0.5">Conventional Commits</div></div>
-          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-git-flow</div><div class="text-xs text-gray-400 mt-0.5">Git Flow, branch naming</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm cursor-pointer hover:border-green-300 transition" onclick="showSkillDetail('database')"><div class="font-medium text-gray-700">ssd-database</div><div class="text-xs text-gray-400 mt-0.5">SQL naming, EF Core</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm cursor-pointer hover:border-green-300 transition" onclick="showSkillDetail('git-commit')"><div class="font-medium text-gray-700">ssd-git-commit</div><div class="text-xs text-gray-400 mt-0.5">Conventional Commits</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm cursor-pointer hover:border-green-300 transition" onclick="showSkillDetail('git-flow')"><div class="font-medium text-gray-700">ssd-git-flow</div><div class="text-xs text-gray-400 mt-0.5">Git Flow, branch naming</div></div>
         </div>
       </div>
       <div>
@@ -515,9 +800,9 @@
           <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full">🐛 Bug Fix + Tools</span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-bug-std-auth-redirect-loop</div><div class="text-xs text-gray-400 mt-0.5">Auth redirect fix</div></div>
-          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-bug-std-version-checker</div><div class="text-xs text-gray-400 mt-0.5">Cache/version fix</div></div>
-          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm"><div class="font-medium text-gray-700">ssd-contact-skill-gen</div><div class="text-xs text-gray-400 mt-0.5">Generate contact skills</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm cursor-pointer hover:border-red-300 transition" onclick="showSkillDetail('bug-auth')"><div class="font-medium text-gray-700">ssd-bug-std-auth-redirect-loop</div><div class="text-xs text-gray-400 mt-0.5">Auth redirect fix</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm cursor-pointer hover:border-red-300 transition" onclick="showSkillDetail('bug-version')"><div class="font-medium text-gray-700">ssd-bug-std-version-checker</div><div class="text-xs text-gray-400 mt-0.5">Cache/version fix</div></div>
+          <div class="skill-card bg-white border border-gray-100 rounded-xl p-3 text-sm cursor-pointer hover:border-red-300 transition" onclick="showSkillDetail('contact-skill-gen')"><div class="font-medium text-gray-700">ssd-contact-skill-gen</div><div class="text-xs text-gray-400 mt-0.5">Generate contact skills</div></div>
         </div>
       </div>
     </div>
@@ -715,12 +1000,16 @@
 
 <!-- ──── Skill Detail Modal ──── -->
 <div id="skillModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal(event)">
-  <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onclick="event.stopPropagation()">
-    <div class="flex items-center justify-between mb-4">
-      <h3 id="modalTitle" class="font-bold text-lg"></h3>
-      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+  <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]" onclick="event.stopPropagation()">
+    <div id="modalHeader" class="flex items-start justify-between p-6 pb-4 flex-shrink-0">
+      <div>
+        <div id="modalCategory" class="text-xs font-bold px-2.5 py-1 rounded-full inline-block mb-2"></div>
+        <h3 id="modalTitle" class="font-bold text-lg font-mono"></h3>
+        <p id="modalTrigger" class="text-sm text-gray-500 mt-1"></p>
+      </div>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-xl ml-4 flex-shrink-0">✕</button>
     </div>
-    <div id="modalContent" class="text-sm text-gray-700 space-y-2"></div>
+    <div id="modalContent" class="text-sm text-gray-700 space-y-4 overflow-y-auto px-6 pb-6"></div>
   </div>
 </div>
 
@@ -760,6 +1049,30 @@ function addScore(pts) {
 function updateOverallProgress() {
   const pct = (state.score / state.maxScore) * 100;
   document.getElementById('overallProgress').style.width = pct + '%';
+}
+
+// ═══════════════════════════════════════════════════════
+//  ACCORDION (Advanced LLM Concepts)
+// ═══════════════════════════════════════════════════════
+function toggleAccordion(id) {
+  const panel = document.getElementById('panel-' + id);
+  const arrow = document.getElementById('arr-' + id);
+  const isHidden = panel.classList.contains('hidden');
+  panel.classList.toggle('hidden', !isHidden);
+  if (arrow) arrow.style.transform = isHidden ? 'rotate(180deg)' : '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  PROMPT TECHNIQUES TABS
+// ═══════════════════════════════════════════════════════
+function selectTechnique(idx) {
+  [0,1,2].forEach(i => {
+    const btn = document.getElementById('tech' + i);
+    const panel = document.getElementById('tech-panel-' + i);
+    const active = i === idx;
+    btn.className = `tech-tab px-4 py-2 rounded-lg text-sm font-medium border-2 ${active ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500'}`;
+    panel.classList.toggle('hidden', !active);
+  });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -930,6 +1243,9 @@ const quizData = [
   { scenario: "มี DLL ใหม่ที่ทีมอื่นสร้างและต้องการสร้าง skill สำหรับ integrate มันเข้า .NET projects", correct: "ssd-contact-skill-gen", options: ["ssd-contact-skill-gen","ssd-dotnet-infra","ssd-backend-setup","ssd-dotnet-service"], explain: "ssd-contact-skill-gen สร้าง SKILL.md ใหม่สำหรับ shared library/contact service ใดๆ" },
   { scenario: "Python service ใช้ print() แทน structlog และ raise HTTPException จาก domain layer", correct: "ssd-python-refactor", options: ["ssd-python-review","ssd-python-refactor","ssd-python-starter","ssd-dotnet-service"], explain: "violations เหล่านี้เหมาะกับ ssd-python-refactor (Tier 1: print→log, Tier 3: HTTPException→DomainError)" },
   { scenario: "ต้องการเขียน Quartz background job ให้ถูกต้อง ใส่ cron expression และ prevent concurrent execution", correct: "ssd-dotnet-infra", options: ["ssd-dotnet-controller","ssd-dotnet-service","ssd-dotnet-infra","ssd-backend-setup"], explain: "ssd-dotnet-infra ครอบคลุม Quartz job patterns, cron expressions, [DisallowConcurrentExecution]" },
+  { scenario: "ต้องเขียน ASP.NET Core Controller ใหม่สำหรับ Order API ให้มี route, HTTP methods, XML comments, และ ClaimPermission ที่ถูกต้อง", correct: "ssd-dotnet-controller", options: ["ssd-dotnet-controller","ssd-backend-setup","ssd-backend-review","ssd-dotnet-service"], explain: "ssd-dotnet-controller กำหนด route pattern (api/order), HTTP method Name, ResponseResult, logging level, และ [ClaimPermission]" },
+  { scenario: "ต้องเขียน Service layer สำหรับ OrderService — มี interface, DTO, AutoMapper mapping, และ custom exception handling", correct: "ssd-dotnet-service", options: ["ssd-dotnet-service","ssd-dotnet-controller","ssd-backend-setup","ssd-dotnet-infra"], explain: "ssd-dotnet-service ครอบคลุม IService interface, DTO pattern, AutoMapper Profile, และ DomainException แทน generic Exception" },
+  { scenario: "developer ทำ commit ว่า 'fixed stuff and added new page and updated deps' — ผิด convention ทั้งหมด", correct: "ssd-git-commit", options: ["ssd-git-commit","ssd-git-flow","ssd-backend-review","ssd-frontend-review"], explain: "ssd-git-commit กำหนด Conventional Commits: type(scope): description — commit ข้างต้นต้องแยกเป็น 3 commits แต่ละ type" },
 ];
 
 let currentQuiz = 0;
@@ -1304,24 +1620,326 @@ function showBranchResult() {
 //  SKILL DETAIL MODAL
 // ═══════════════════════════════════════════════════════
 const skillDetails = {
-  'frontend-setup': { title: 'ssd-frontend-setup', desc: 'ตั้งค่าโปรเจค Frontend ใหม่', items: ['VS Code extensions ที่ต้องติดตั้ง','Prettier config (tabWidth 4, CRLF)','Naming: PascalCase component, kebab-case route','Folder: src/app/{layout,api,modules,routes,redux}','Env vars: VITE_ prefix, ใช้ผ่าน window.__CONST__ENV__'] },
-  'react-component': { title: 'ssd-react-component', desc: 'มาตรฐาน React Component', items: ['export type [Name]Props','1 component ต่อ 1 ไฟล์','Fragment: <> แทน <React.Fragment>','ห้าม React.createElement','Boolean prop: disabled ไม่ใช่ disabled={true}'] },
-  'react-form': { title: 'ssd-react-form', desc: 'Form Handling ด้วย Formik', items: ['ใช้ useFormik<T>() เสมอ','enableReinitialize: true','validate function return FormikErrors<T>','Custom component: getFieldProps + getFieldMeta','ห้าม raw useState+onChange สำหรับ form'] },
-  'react-state': { title: 'ssd-react-state', desc: 'Redux Toolkit', items: ['createSlice({ name, initialState, reducers })','export actions, reducer, selector','useAppSelector จาก redux/hook.ts','useAppDispatch จาก redux/hook.ts','rootReducer.ts รวม all slices'] },
-  'react-api': { title: 'ssd-react-api', desc: 'API Calls ด้วย React Query', items: ['useQuery สำหรับ GET','useMutation สำหรับ POST/action','queryKeys object สำหรับ key management','NSwag code generation workflow','ห้าม axios ใน component โดยตรง'] },
-  'frontend-review': { title: 'ssd-frontend-review', desc: 'ตรวจ violations Frontend', items: ['9 categories: Types, Naming, Component, Lists, Props, Env, Forms, State, API, Testing','Report พร้อม file:line','ใช้ก่อน PR'] },
-  'frontend-refactor': { title: 'ssd-frontend-refactor', desc: 'แก้ไขปลอดภัยด้วย 4 Tiers', items: ['Tier 1: Fragment, Boolean prop (ปลอดภัย)','Tier 2: any→unknown + npx tsc --noEmit','Tier 3: Rename + grep usages ก่อน','Tier 4: Route paths → ห้ามแก้, แจ้ง user'] },
+  'frontend-setup': {
+    title: 'ssd-frontend-setup', category: 'Frontend (React/TS)', color: 'cyan',
+    trigger: 'ใช้เมื่อตั้งค่า React/TypeScript project ใหม่ หรือ onboard developer ใหม่',
+    keyRules: [
+      'Folder structure: src/app/{layout, api, modules, routes, redux}',
+      'Prettier: tabWidth 4, semi true, endOfLine CRLF, singleQuote true',
+      'Component: PascalCase — Page/Module/Container/View/Card',
+      'Env vars: VITE_ prefix เสมอ, อ่านผ่าน window.__CONST__ENV__',
+      'VS Code extensions: ESLint, Prettier, GitLens (required)',
+    ],
+    example: { lang: 'tsx', code: `// ✅ Correct env var usage\nconst apiUrl = window.__CONST__ENV__?.VITE_API_URL;\n\n// ✅ Correct folder naming\nsrc/app/modules/order/\n  OrderModule.tsx       ← Module\n  components/\n    OrderTable.tsx      ← Component\n    OrderForm.tsx       ← Component` },
+    violations: ['❌ ใช้ import.meta.env โดยตรงใน component', '❌ Folder ชื่อ camelCase เช่น orderModule'],
+  },
+  'react-component': {
+    title: 'ssd-react-component', category: 'Frontend (React/TS)', color: 'cyan',
+    trigger: 'ใช้เมื่อเขียน React component ใหม่ กำหนด Props type หรือตั้งชื่อ component/page',
+    keyRules: [
+      '1 component ต่อ 1 ไฟล์เสมอ',
+      'Export Props type: export type [ComponentName]Props = {...}',
+      'Fragment: ใช้ <> ไม่ใช้ <React.Fragment>',
+      'ห้ามใช้ React.createElement ใช้ JSX เท่านั้น',
+      'Boolean prop: ใช้ disabled ไม่ใช้ disabled={true}',
+      'ห้ามใช้ array index เป็น key ใน .map()',
+    ],
+    example: { lang: 'tsx', code: `export type OrderTableProps = {\n  title: string;\n  onSubmit?: () => void;\n};\n\nconst OrderTable = ({ title, onSubmit }: OrderTableProps) => {\n  const handleClick = () => onSubmit?.();\n  return (\n    <>\n      <h1>{title}</h1>\n      <button onClick={handleClick} disabled>Submit</button>\n    </>\n  );\n};\n\nexport default OrderTable;` },
+    violations: ['❌ Props type ชื่อ Props หรือ IProps แทน OrderTableProps', '❌ <React.Fragment> แทน <>', '❌ key={index}'],
+  },
+  'react-form': {
+    title: 'ssd-react-form', category: 'Frontend (React/TS)', color: 'cyan',
+    trigger: 'ใช้เมื่อเขียน form ใน React — ทุก form ต้องใช้ Formik + Yup เท่านั้น',
+    keyRules: [
+      'ใช้ useFormik<T>() กับ Yup validation schema เสมอ',
+      'enableReinitialize: true เมื่อ initialValues มาจาก API',
+      'validate function ต้อง return FormikErrors<T>',
+      'Custom field component ใช้ getFieldProps() + getFieldMeta()',
+      'ห้ามใช้ raw useState + onChange สำหรับ form data',
+    ],
+    example: { lang: 'tsx', code: `const schema = Yup.object({\n  email: Yup.string().email().required(),\n  name: Yup.string().min(2).required(),\n});\n\nconst formik = useFormik<LoginDto>({\n  initialValues: { email: '', name: '' },\n  enableReinitialize: true,\n  validationSchema: schema,\n  onSubmit: (values) => handleLogin(values),\n});` },
+    violations: ['❌ useState + onChange สำหรับ form', '❌ ไม่มี Yup schema', '❌ validate ไม่ return FormikErrors'],
+  },
+  'react-state': {
+    title: 'ssd-react-state', category: 'Frontend (React/TS)', color: 'cyan',
+    trigger: 'ใช้เมื่อจัดการ global state ใน React ด้วย Redux Toolkit',
+    keyRules: [
+      'สร้าง slice ด้วย createSlice({ name, initialState, reducers })',
+      'Export actions, reducer, และ selector จาก slice เดียวกัน',
+      'ใช้ useAppSelector จาก redux/hook.ts (typed)',
+      'ใช้ useAppDispatch จาก redux/hook.ts (typed)',
+      'รวม slices ทั้งหมดใน rootReducer.ts',
+    ],
+    example: { lang: 'tsx', code: `// authSlice.ts\nconst authSlice = createSlice({\n  name: 'auth',\n  initialState: { user: null as UserDto | null },\n  reducers: {\n    setUser: (state, action: PayloadAction<UserDto>) => {\n      state.user = action.payload;\n    },\n  },\n});\n\nexport const { setUser } = authSlice.actions;\nexport const selectUser = (s: RootState) => s.auth.user;\nexport default authSlice.reducer;` },
+    violations: ['❌ ใช้ useSelector โดยตรง ไม่ใช้ useAppSelector', '❌ ใช้ useState แทน Redux สำหรับ shared state'],
+  },
+  'react-api': {
+    title: 'ssd-react-api', category: 'Frontend (React/TS)', color: 'cyan',
+    trigger: 'ใช้เมื่อเรียก API จาก React component — ต้องใช้ React Query ทั้งหมด',
+    keyRules: [
+      'GET: ใช้ useQuery() พร้อม queryKey จาก queryKeys object',
+      'POST/PUT/DELETE: ใช้ useMutation()',
+      'ต้องมี queryKeys object กลางสำหรับ key management',
+      'ไม่ call axios/fetch โดยตรงใน component',
+      'ใช้ NSwag generate client จาก swagger spec',
+    ],
+    example: { lang: 'tsx', code: `// queryKeys.ts\nexport const queryKeys = {\n  orders: { all: ['orders'] as const },\n  order: (id: number) => ['orders', id] as const,\n};\n\n// ใน component\nconst { data, isLoading } = useQuery({\n  queryKey: queryKeys.orders.all,\n  queryFn: () => orderApi.getAll(),\n});` },
+    violations: ['❌ axios.get() โดยตรงใน useEffect หรือ component', '❌ ไม่มี queryKeys object', '❌ ใช้ string literal เป็น queryKey'],
+  },
+  'frontend-review': {
+    title: 'ssd-frontend-review', category: 'Frontend (React/TS)', color: 'indigo',
+    trigger: 'ใช้เมื่อ audit React/TypeScript code ก่อน PR หรือ review code อื่น',
+    keyRules: [
+      'Read-only เท่านั้น — ห้ามแก้ไขไฟล์ระหว่าง review',
+      'ตรวจ 9 categories: Types, Naming, Component, Lists, Env, Forms, State, API, Testing',
+      'รายงาน violations พร้อม file path และ line number',
+      'แยก Error (must fix) vs Warning (should fix)',
+      'ใช้ก่อน PR ทุกครั้ง',
+    ],
+    example: { lang: 'tsx', code: `## Frontend Review Report\n\n### ❌ Violations (must fix)\n| File         | Line | Category | ปัญหา              |\n|--------------|------|----------|--------------------|\n| OrderForm.tsx| 12   | Types    | ใช้ any → OrderDto |\n| OrderForm.tsx| 8    | Naming   | Props → OrderFormProps |\n| OrderForm.tsx| 25   | Forms    | useState แทน Formik |\n\n### ⚠️ Warnings\n| File         | Line | Category | ปัญหา |\n|...|...|...|...|\n\n### สรุป: ❌ FAIL — 3 violations` },
+    violations: ['❌ แก้ไข code ระหว่าง review (ใช้ refactor skill แทน)'],
+  },
+  'frontend-refactor': {
+    title: 'ssd-frontend-refactor', category: 'Frontend (React/TS)', color: 'indigo',
+    trigger: 'ใช้เมื่อต้องการแก้ violations ที่พบจาก frontend-review อย่างปลอดภัย',
+    keyRules: [
+      'Tier 1 (ปลอดภัย): แก้ Fragment <React.Fragment>→<>, Boolean props',
+      'Tier 2 (ต้องรัน tsc): แก้ any→unknown แล้วรัน npx tsc --noEmit',
+      'Tier 3 (ต้อง grep): เปลี่ยนชื่อ component/props — grep หา usages ก่อน',
+      'Tier 4 (ห้ามแก้): Route paths, export names — แจ้ง user ก่อน',
+      'รัน tsc ก่อนและหลัง refactor เสมอ',
+    ],
+    example: { lang: 'tsx', code: `// Tier 1 — ปลอดภัย แก้ได้ทันที\n- <React.Fragment>  →  <>\n- disabled={true}  →  disabled\n\n// Tier 2 — รัน tsc ก่อน/หลัง\n- items: any[]  →  items: OrderDto[]\n$ npx tsc --noEmit  # ต้อง 0 errors\n\n// Tier 3 — grep ก่อนเปลี่ยน\n$ grep -r "OrderProps" src/\n- interface Props → OrderTableProps` },
+    violations: ['❌ แก้ route path หรือ export name โดยไม่แจ้ง user'],
+  },
+
+  // ─── Backend (.NET/C#) ───
+  'backend-setup': {
+    title: 'ssd-backend-setup', category: 'Backend (.NET/C#)', color: 'blue',
+    trigger: 'ใช้เมื่อตั้งค่า .NET/C# project ใหม่หรือ setup environment',
+    keyRules: [
+      'IDE: Visual Studio 2022 + .NET 8 SDK',
+      'Folder: API/{Controllers, Services, Models, Infrastructure}',
+      'ORM: Entity Framework Core + Code First migrations',
+      'Logging: Serilog พร้อม structured logging (ห้ามใช้ Console.WriteLine)',
+      'DI: Register services ใน Program.cs ด้วย IServiceCollection',
+    ],
+    example: { lang: 'csharp', code: `// Program.cs\nbuilder.Services.AddScoped<IOrderService, OrderService>();\nbuilder.Services.AddScoped<IOrderRepository, OrderRepository>();\n\nLog.Logger = new LoggerConfiguration()\n    .WriteTo.Console()\n    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)\n    .CreateLogger();` },
+  },
+  'dotnet-controller': {
+    title: 'ssd-dotnet-controller', category: 'Backend (.NET/C#)', color: 'blue',
+    trigger: 'ใช้เมื่อเขียน ASP.NET Core API Controller ใหม่',
+    keyRules: [
+      'Route: [Route("api/controller-name")] — lowercase kebab-case เสมอ',
+      'HTTP method ต้องมี Name: [HttpGet(Name = "ControllerGetAll")]',
+      'Return: ResponseResult + ServiceResponse เสมอ',
+      'XML comment บน ทุก public method',
+      'Logging: Debug สำหรับ GET, Information สำหรับ POST/PUT/DELETE',
+      'ใช้ [ClaimPermission] สำหรับ protected endpoints',
+    ],
+    example: { lang: 'csharp', code: `[ApiController]\n[Route("api/order")]\npublic class OrderController : ControllerBase\n{\n    private readonly IOrderService _service;\n    private readonly ILogger _logger;\n\n    /// <summary>Get all orders</summary>\n    [HttpGet(Name = "OrderGetAll")]\n    [ClaimPermission(Permission.order_read)]\n    public async Task<IActionResult> GetAll()\n    {\n        _logger.Debug("OrderGetAll called");\n        var result = await _service.GetAllAsync();\n        return Ok(ResponseResult.Success(result));\n    }\n}` },
+    violations: ['❌ ไม่มี Name ใน HttpGet/HttpPost', '❌ return ตรงๆ ไม่ผ่าน ResponseResult', '❌ ไม่มี XML comment'],
+  },
+  'dotnet-service': {
+    title: 'ssd-dotnet-service', category: 'Backend (.NET/C#)', color: 'blue',
+    trigger: 'ใช้เมื่อเขียน Service layer, DTO, หรือ AutoMapper profile',
+    keyRules: [
+      'Service interface: IOrderService ที่ controller depend on',
+      'DTO: OrderDto, CreateOrderDto — ต่างจาก Entity',
+      'AutoMapper: สร้าง Profile แยกต่างหาก CreateMap<Entity, Dto>()',
+      'Exception: throw custom DomainException ไม่ใช่ generic Exception',
+      'Async: ทุก database call ต้องเป็น async/await',
+    ],
+    example: { lang: 'csharp', code: `public class OrderService : IOrderService\n{\n    private readonly IOrderRepository _repo;\n    private readonly IMapper _mapper;\n\n    public async Task<OrderDto> GetByIdAsync(int id)\n    {\n        var order = await _repo.GetByIdAsync(id)\n            ?? throw new NotFoundException($"Order {id} not found");\n        return _mapper.Map<OrderDto>(order);\n    }\n}` },
+  },
+  'dotnet-infra': {
+    title: 'ssd-dotnet-infra', category: 'Backend (.NET/C#)', color: 'blue',
+    trigger: 'ใช้เมื่อเขียน background jobs, HTTP clients, หรือ infrastructure concerns',
+    keyRules: [
+      'Quartz jobs: implement IJob + [DisallowConcurrentExecution]',
+      'Cron format: "0 0 * * *" (Quartz 5-field)',
+      'RestSharp: inject IRestClient ไม่ new RestClient ตรงใน method',
+      'Serilog context: LogContext.PushProperty() สำหรับ correlation ID',
+      'ห้าม blocking calls (.Result / .Wait()) ใน async context',
+    ],
+    example: { lang: 'csharp', code: `[DisallowConcurrentExecution]\npublic class DailyReportJob : IJob\n{\n    public async Task Execute(IJobExecutionContext ctx)\n    {\n        using var scope = _serviceScopeFactory.CreateScope();\n        var svc = scope.ServiceProvider.GetRequiredService<IReportService>();\n        await svc.GenerateDailyAsync();\n    }\n}\n\n// Register\nq.AddJob<DailyReportJob>(j => j.WithIdentity("daily-report"));\nq.AddTrigger(t => t.ForJob("daily-report")\n    .WithCronSchedule("0 0 7 * * ?"));` },
+    violations: ['❌ ไม่มี [DisallowConcurrentExecution]', '❌ .Result/.Wait() ใน async method'],
+  },
+  'backend-review': {
+    title: 'ssd-backend-review', category: 'Backend (.NET/C#)', color: 'indigo',
+    trigger: 'ใช้เมื่อ audit C# code ก่อน PR — read-only เท่านั้น ห้ามแก้ไข',
+    keyRules: [
+      'Read-only เท่านั้น ห้ามแก้ไขไฟล์ระหว่าง review',
+      'ตรวจ: Route naming, HTTP Name attribute, XML comments',
+      'ตรวจ: Log level (Debug=GET, Info=write), ResponseResult wrapper',
+      'ตรวจ: ClaimPermission บน protected endpoints',
+      'ตรวจ: async/await consistency, ห้าม .Result/.Wait()',
+    ],
+    example: { lang: 'csharp', code: `## Backend Review Report\n\n### ❌ Violations (must fix)\n| File             | Line | Category     | ปัญหา                       |\n|------------------|------|--------------|------------------------------|\n| OrderController  | 15   | HTTP Method  | ไม่มี Name ใน HttpGet        |\n| OrderController  | 22   | Logging      | ใช้ Information ใน GET       |\n| OrderService     | 31   | Async        | .Result แทน await            |\n\n### สรุป: ❌ FAIL — 3 violations` },
+  },
+  'backend-refactor': {
+    title: 'ssd-backend-refactor', category: 'Backend (.NET/C#)', color: 'indigo',
+    trigger: 'ใช้เมื่อต้องการแก้ violations จาก backend-review อย่างปลอดภัย',
+    keyRules: [
+      'Tier 1 (ปลอดภัย): เพิ่ม XML comment, แก้ log level, เพิ่ม Name',
+      'Tier 2 (ต้อง build): เปลี่ยน return type, เพิ่ม ResponseResult wrapper',
+      'Tier 3 (ต้อง grep): rename method/interface — grep usages ก่อน',
+      'รัน dotnet build ก่อนและหลังเสมอ — ต้องได้ 0 errors',
+      'Tier 4 (ห้ามแก้): API route paths — แจ้ง user ก่อน เพราะ client อาจพัง',
+    ],
+    example: { lang: 'csharp', code: `// Tier 1 — ปลอดภัย เพิ่มได้เลย\n/// <summary>Get all orders</summary>  ← เพิ่ม\n[HttpGet(Name = "OrderGetAll")]        ← เพิ่ม Name\n_logger.Debug("called");               ← เปลี่ยน Info→Debug\n\n// Tier 2 — build ก่อน/หลัง\nreturn Ok(data);\n→ return Ok(ResponseResult.Success(data));\n\n$ dotnet build  // ต้อง 0 errors` },
+    violations: ['❌ แก้ Route path โดยไม่แจ้ง frontend team'],
+  },
+
+  // ─── Python (FastAPI) ───
+  'python-starter': {
+    title: 'ssd-python-starter', category: 'Python (FastAPI)', color: 'yellow',
+    trigger: 'ใช้เมื่อเริ่ม Python FastAPI project ใหม่จาก SSD template',
+    keyRules: [
+      'Clone: git clone SSD-Python-Starter-Template',
+      'สร้าง CONTEXT.md อธิบาย project purpose, tech stack, bounded context',
+      'Folder: app/{api, core, domain, infrastructure, schemas}',
+      'Virtual env: python -m venv .venv && .venv/Scripts/activate',
+      'Dependencies: uvicorn, fastapi, sqlalchemy, structlog, pydantic',
+    ],
+    example: { lang: 'python', code: `# app/main.py\nfrom fastapi import FastAPI\nfrom app.api.routers import order_router\nimport structlog\n\nlog = structlog.get_logger()\napp = FastAPI(title="Order API")\napp.include_router(order_router, prefix="/api/orders")\n\n# CONTEXT.md (สร้างทันที)\n# Project: Order Management\n# Bounded Context: OrderContext\n# Stack: FastAPI + SQLAlchemy + PostgreSQL` },
+  },
+  'python-review': {
+    title: 'ssd-python-review', category: 'Python (FastAPI)', color: 'yellow',
+    trigger: 'ใช้เมื่อ audit Python/FastAPI code ก่อน PR — read-only',
+    keyRules: [
+      'Read-only เท่านั้น ห้ามแก้ไขระหว่าง review',
+      'ตรวจ: ห้ามใช้ print() ต้องใช้ structlog',
+      'ตรวจ: type hints ครบทุก function parameter และ return type',
+      'ตรวจ: ห้าม raise HTTPException จาก domain/service layer',
+      'ตรวจ: Pydantic model มี Request/Response suffix',
+    ],
+    example: { lang: 'python', code: `## Python Review Report\n\n### ❌ Violations\n| File           | Line | Category | ปัญหา                         |\n|----------------|------|----------|--------------------------------|\n| order_service  | 12   | Logging  | print() → structlog.info()     |\n| order_router   | 28   | Error    | raise HTTPException จาก service|\n| create_order   | 5    | Types    | ไม่มี return type hint          |\n\n### สรุป: ❌ FAIL` },
+  },
+  'python-refactor': {
+    title: 'ssd-python-refactor', category: 'Python (FastAPI)', color: 'yellow',
+    trigger: 'ใช้เมื่อต้องการแก้ violations จาก python-review อย่างปลอดภัย',
+    keyRules: [
+      'Tier 1 (ปลอดภัย): print()→structlog, เพิ่ม type hints',
+      'Tier 2 (รัน pytest): เปลี่ยน response schema, เพิ่ม validation',
+      'Tier 3 (ระวัง): HTTPException→DomainError, restructure layers',
+      'รัน pytest ก่อนและหลังเสมอ — ต้อง pass ทุก test',
+      'Tier 4 (ห้ามแก้): API route paths — แจ้ง client ก่อน',
+    ],
+    example: { lang: 'python', code: `# Tier 1 — ปลอดภัย\n- print(f"order {id}")  →  log.info("order.get", id=id)\n- def get(id):          →  def get(id: int) -> OrderDto:\n\n# Tier 3 — restructure\n# ❌ service layer\nraise HTTPException(status_code=404, detail="Not found")\n# ✅ domain layer\nraise OrderNotFoundError(id)\n# ✅ router layer catches and converts\n\n$ pytest  # ต้อง 100% pass` },
+  },
+
+  // ─── Database + Git ───
+  'database': {
+    title: 'ssd-database', category: 'Database + Git', color: 'green',
+    trigger: 'ใช้เมื่อออกแบบ database schema, เขียน migration, หรือใช้ EF Core',
+    keyRules: [
+      'Table: PascalCase เช่น OrderItems, UserProfiles',
+      'Column: PascalCase เช่น OrderId, CreatedAt',
+      'FK: [TableName]Id เช่น OrderId, UserId',
+      'EF Core: ใช้ Code First + Fluent API ไม่ใช้ Data Annotations',
+      'Migration: ชื่อ descriptive เช่น AddOrderStatusColumn',
+    ],
+    example: { lang: 'csharp', code: `// Entity\npublic class Order\n{\n    public int OrderId { get; set; }\n    public int UserId { get; set; }  // FK\n    public DateTime CreatedAt { get; set; }\n    public User User { get; set; } = null!;\n}\n\n// Fluent API\nmodelBuilder.Entity<Order>(e => {\n    e.HasKey(o => o.OrderId);\n    e.Property(o => o.CreatedAt).HasDefaultValueSql("GETUTCDATE()");\n});` },
+  },
+  'git-commit': {
+    title: 'ssd-git-commit', category: 'Database + Git', color: 'green',
+    trigger: 'ใช้เมื่อเขียน commit message หรือตั้ง version (semantic versioning)',
+    keyRules: [
+      'Format: <type>[optional scope]: <description>',
+      'Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore',
+      'Description ≤ 50 chars, imperative form (English)',
+      'Breaking change: เพิ่ม ! ก่อน : เช่น feat(api)!: change response format',
+      '1 commit = 1 concern — ห้ามรวมหลาย type ใน commit เดียว',
+    ],
+    example: { lang: 'bash', code: `# ✅ ถูกต้อง\nfeat(controller): add login controller\nfix(service): fix payment calculation bug\ndocs: update README setup steps\nrefactor(service): restructure order service\n\n# ✅ Breaking change\nfeat(api)!: change response format to array\n\n# ❌ ผิด\ngit commit -m "fixed stuff and added new page"\n# → ต้องแยกเป็น 2 commits` },
+    violations: ['❌ รวมหลาย concern ใน commit เดียว', '❌ description เกิน 50 chars', '❌ ไม่ใช้ imperative form'],
+  },
+  'git-flow': {
+    title: 'ssd-git-flow', category: 'Database + Git', color: 'green',
+    trigger: 'ใช้เมื่อตั้งชื่อ branch หรือทำ Git Flow (feature, hotfix, release)',
+    keyRules: [
+      'Feature: feature/[spec-id-]description เช่น feature/add-login-page',
+      'Hotfix: hotfix/fix-description เช่น hotfix/fix-order-price',
+      'Release: release/x.y.z เช่น release/2.1.0',
+      'Multi-project: feature/[project-code]-description เช่น feature/sss-login',
+      'Branch ต้องมาจาก develop (feature/hotfix) หรือ main (release)',
+    ],
+    example: { lang: 'bash', code: `# Feature branch\ngit checkout develop\ngit checkout -b feature/add-dashboard-page\n\n# Hotfix (urgent production fix)\ngit checkout main\ngit checkout -b hotfix/fix-order-price\n\n# Release\ngit checkout develop\ngit checkout -b release/2.1.0\n\n# Multi-project feature\ngit checkout -b feature/sss-add-login-page` },
+    violations: ['❌ ตั้งชื่อ branch แบบ camelCase', '❌ feature branch มาจาก main', '❌ รวมงานหลาย feature ใน branch เดียว'],
+  },
+
+  // ─── Bug Fix + Tools ───
+  'bug-auth': {
+    title: 'ssd-bug-std-auth-redirect-loop', category: 'Bug Fix', color: 'indigo',
+    trigger: 'ใช้เมื่อพบ Auth redirect loop หลัง deploy — ผู้ใช้เจอ blank page / วน redirect',
+    keyRules: [
+      'Root cause: signinRedirect() ถูกเรียกซ้ำเมื่อ getUser() ล้มเหลว',
+      'Fix: ใช้ signinSilentThenRedirect() แทน signinRedirect() ตรงๆ',
+      'Guard: sessionStorage key "auth_redirect_in_progress" ป้องกัน loop',
+      'Verify: ตรวจ sessionStorage ว่า key ถูก clear หลัง login สำเร็จ',
+      'Apply: แก้ AuthProvider.tsx + สร้าง authRedirect.ts',
+    ],
+    example: { lang: 'tsx', code: `// authRedirect.ts (สร้างใหม่)\nexport const setAuthRedirectInProgress = () =>\n  sessionStorage.setItem('auth_redirect_in_progress', Date.now().toString());\n\nexport const clearAuthRedirect = () =>\n  sessionStorage.removeItem('auth_redirect_in_progress');\n\nexport const isAuthRedirectInProgress = () =>\n  !!sessionStorage.getItem('auth_redirect_in_progress');\n\n// AuthProvider.tsx\nif (!user && !isAuthRedirectInProgress()) {\n  setAuthRedirectInProgress();\n  await userManager.signinSilent() ?? userManager.signinRedirect();\n}` },
+  },
+  'bug-version': {
+    title: 'ssd-bug-std-version-checker', category: 'Bug Fix', color: 'indigo',
+    trigger: 'ใช้เมื่อ browser โหลด JS chunk เก่าหลัง deploy หรือ VersionChecker race condition',
+    keyRules: [
+      'Root cause: browser cache JS chunks เก่า + race condition ใน VersionChecker',
+      'Fix 1: เพิ่ม cache-busting headers ใน nginx/IIS config',
+      'Fix 2: แก้ VersionChecker.tsx ให้ check version ก่อน render',
+      'Fix 3: ใช้ import.meta.env.VITE_APP_VERSION สำหรับ version string',
+      'Verify: hard refresh แล้วดู Network tab ว่าโหลด JS ใหม่',
+    ],
+    example: { lang: 'tsx', code: `// VersionChecker.tsx\nconst VersionChecker = () => {\n  useEffect(() => {\n    const checkVersion = async () => {\n      const res = await fetch('/version.json', { cache: 'no-store' });\n      const { version } = await res.json();\n      const current = import.meta.env.VITE_APP_VERSION;\n      if (version !== current) window.location.reload();\n    };\n    checkVersion();\n  }, []);\n  return null;\n};` },
+  },
+  'contact-skill-gen': {
+    title: 'ssd-contact-skill-gen', category: 'Tools', color: 'indigo',
+    trigger: 'ใช้เมื่อต้องการสร้าง SKILL.md ใหม่สำหรับ shared library หรือ contact service',
+    keyRules: [
+      'Input: รับ DLL/package name, purpose, API list จาก user',
+      'Output: สร้าง SKILL.md ใหม่ใน skills/ssd-contact-[name]/ directory',
+      'Format: ตาม SSD skill template — frontmatter + description + rules + examples',
+      'Trigger phrase: ออกแบบให้ชัดเจน เช่น "integrate X library" หรือ "ใช้ Y service"',
+      'Test: ลอง activate skill ใหม่แล้ว verify ว่า AI ทำงานถูก',
+    ],
+    example: { lang: 'bash', code: `# ตัวอย่าง: สร้าง skill สำหรับ SSD.Notification library\n\n# 1. User บอก info:\n#    - Library: SSD.Notification.dll\n#    - Methods: SendEmail(), SendSMS(), SendPush()\n#    - Pattern: inject INotificationService\n\n# 2. AI สร้าง skills/ssd-contact-notification/SKILL.md\n# ---\n# name: ssd-contact-notification\n# description: ใช้เมื่อส่ง notification ผ่าน SSD.Notification library\n# ---\n# Key rules: inject INotificationService, ใช้ NotificationDto` },
+  },
 };
 
 function showSkillDetail(key) {
   const d = skillDetails[key];
   if (!d) return;
+  const colorMap = { cyan: 'bg-cyan-100 text-cyan-700', indigo: 'bg-indigo-100 text-indigo-700', blue: 'bg-blue-100 text-blue-700', yellow: 'bg-yellow-100 text-yellow-700', green: 'bg-green-100 text-green-700' };
+  const catColor = colorMap[d.color] || 'bg-gray-100 text-gray-600';
+  document.getElementById('modalCategory').className = `text-xs font-bold px-2.5 py-1 rounded-full inline-block mb-2 ${catColor}`;
+  document.getElementById('modalCategory').textContent = d.category;
   document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalTrigger').textContent = d.trigger;
+  const violations = d.violations ? `
+    <div>
+      <div class="text-xs font-semibold text-red-600 uppercase tracking-wider mb-2">Common Violations</div>
+      <ul class="space-y-1.5">
+        ${d.violations.map(v => `<li class="flex items-start gap-2 text-xs text-red-700 bg-red-50 rounded-lg px-3 py-2"><span class="flex-shrink-0">•</span>${v}</li>`).join('')}
+      </ul>
+    </div>
+  ` : '';
+  const example = d.example ? `
+    <div>
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Code Example</div>
+      <pre class="bg-gray-900 rounded-xl p-4 text-xs text-green-300 overflow-x-auto leading-relaxed whitespace-pre font-mono">${d.example.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+    </div>
+  ` : '';
   document.getElementById('modalContent').innerHTML = `
-    <p class="text-gray-500 text-sm mb-3">${d.desc}</p>
-    <ul class="space-y-1.5">
-      ${d.items.map(i => `<li class="flex items-start gap-2 text-sm"><span class="text-indigo-500 mt-0.5">•</span>${i}</li>`).join('')}
-    </ul>
+    <div>
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Key Rules</div>
+      <ul class="space-y-2">
+        ${d.keyRules.map((r,i) => `<li class="flex items-start gap-2 text-sm"><span class="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">${i+1}</span>${r}</li>`).join('')}
+      </ul>
+    </div>
+    ${example}
+    ${violations}
   `;
   document.getElementById('skillModal').classList.remove('hidden');
   document.getElementById('skillModal').classList.add('flex');
