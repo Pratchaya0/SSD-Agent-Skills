@@ -61,6 +61,7 @@ npx skills add github:Pratchaya0/SSD-Agent-Skills/skills/ssd-git-commit
 | `/ssd python-starter` | เริ่มต้น Python project ใหม่จาก SSD-Python-Starter-Template |
 | `/ssd python-review` | ตรวจสอบ code Python — Architecture, HTTP methods, logging, DB, error handling |
 | `/ssd python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย + pytest verify |
+| `/ssd python-database` | PostgreSQL + SQLAlchemy 2.x: naming, ORM models, async session, Alembic migration |
 
 ### Review & Refactor
 
