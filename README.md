@@ -2,41 +2,90 @@
 
 คอลเลกชัน Agent Skills สำหรับทีมพัฒนาของ Smile Solution Development จาก SIAM SMILE WEB SPECIFICATION v2.0.1
 
-## วิธีใช้งาน
+1 skill, 23 commands — React/TypeScript, .NET Core, Python, Git
 
-ติดตั้ง skill ที่ต้องการด้วยคำสั่ง:
+## ติดตั้ง
+
+### วิธีที่แนะนำ — ติดตั้งครั้งเดียวได้ทุก command
 
 ```bash
-npx skills add <github-repo-url>/skills/<skill-name>
+npx skills add github:Pratchaya0/SSD-Agent-Skills/.claude/skills/ssd
 ```
 
-## Skills ที่มีให้ใช้
+ได้ `/ssd` command เดียวในเมนู พร้อมใช้ 23 sub-commands ทันที
 
-| Skill | ใช้เมื่อ |
-|-------|----------|
-| `ssd-frontend-setup` | ตั้งค่าโปรเจค Frontend ใหม่, โครงสร้าง folder, เครื่องมือ, naming conventions |
-| `ssd-react-component` | เขียน React component, ตั้งชื่อ component/props/page |
-| `ssd-react-form` | ใช้งาน Formik สำหรับ form, validation |
-| `ssd-react-state` | ใช้งาน Redux, สร้าง slice, dispatch action |
-| `ssd-react-api` | เรียก API ด้วย Axios, React Query, NSwag |
-| `ssd-backend-setup` | ตั้งค่าโปรเจค .NET ใหม่, โครงสร้าง folder, naming conventions |
-| `ssd-dotnet-controller` | เขียน ASP.NET API Controller |
-| `ssd-dotnet-service` | เขียน Service, DTO, AutoMapper |
-| `ssd-dotnet-infra` | Logging (Serilog), Background jobs (Quartz), API client (RestSharp) |
-| `ssd-database` | กำหนดชื่อ database objects, EF Core Reverse Engineer |
-| `ssd-git-commit` | เขียน commit message, semantic versioning |
-| `ssd-git-flow` | Git Flow workflow, branch naming, pull request |
-| `ssd-contact-skill-gen` | แปลง setup document ของ shared library หรือ contact service ใหม่เป็น SKILL.md มาตรฐาน SSD |
-| `ssd-frontend-review` | ตรวจสอบ code React/TypeScript ว่าตรง SSD standard — รายงาน violations พร้อม file:line |
-| `ssd-backend-review` | ตรวจสอบ code C#/.NET ว่าตรง SSD standard — รายงาน violations พร้อม file:line |
-| `ssd-frontend-refactor` | แก้ไข .tsx/.ts ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + TypeScript compile check |
-| `ssd-backend-refactor` | แก้ไข .cs ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + dotnet build check |
-| `ssd-bug-std-auth-redirect-loop` | แก้ bug หน้าขาว / redirect loop หลัง login (oidc-client-ts, react-ts-template-2023) |
-| `ssd-bug-std-version-checker` | แก้ bug ไม่เห็น version ใหม่หลัง deploy — JS chunk cache + VersionChecker race condition |
-| `ssd-python-review` | ตรวจสอบ code Python ว่าตรง SSD standard — Architecture, HTTP methods, logging, DB, error handling |
-| `ssd-python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย ทีละไฟล์ + pytest verify |
-| `ssd-python-starter` | เริ่มต้น Python project ใหม่จาก SSD-Python-Starter-Template — clone, configure, สร้าง bounded context |
-| `ssd-release-it-setup` | ติดตั้ง release-it และตั้งค่า .release-it config ใน project ที่ยังไม่มี — สร้าง CHANGELOG.md + GitHub Draft Release อัตโนมัติ |
+### ติดตั้งเฉพาะบาง skill (แบบเดิม)
+
+```bash
+npx skills add github:Pratchaya0/SSD-Agent-Skills/skills/ssd-frontend-setup
+npx skills add github:Pratchaya0/SSD-Agent-Skills/skills/ssd-git-commit
+# ... ทีละ skill
+```
+
+## วิธีใช้งาน
+
+```
+/ssd frontend-setup     ตั้งค่าโปรเจค React/TypeScript ใหม่
+/ssd git-commit         เขียน commit message ตามมาตรฐาน
+/ssd python-review      review Python code
+```
+
+หรือพิมพ์ `/ssd` เพื่อดูรายการ commands ทั้งหมด
+
+## Commands ที่มี (23 commands)
+
+### Frontend (React + TypeScript)
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd frontend-setup` | ตั้งค่าโปรเจค Frontend ใหม่, โครงสร้าง folder, เครื่องมือ, naming conventions |
+| `/ssd react-component` | เขียน React component, ตั้งชื่อ component/props/page |
+| `/ssd react-form` | ใช้งาน Formik สำหรับ form, validation |
+| `/ssd react-state` | ใช้งาน Redux, สร้าง slice, dispatch action |
+| `/ssd react-api` | เรียก API ด้วย Axios, React Query, NSwag |
+
+### Backend (.NET Core)
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd backend-setup` | ตั้งค่าโปรเจค .NET ใหม่, โครงสร้าง folder, naming conventions |
+| `/ssd dotnet-controller` | เขียน ASP.NET API Controller |
+| `/ssd dotnet-service` | เขียน Service, DTO, AutoMapper |
+| `/ssd dotnet-infra` | Logging (Serilog), Background jobs (Quartz), API client (RestSharp) |
+| `/ssd database` | กำหนดชื่อ database objects, EF Core Reverse Engineer |
+
+### Python
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd python-starter` | เริ่มต้น Python project ใหม่จาก SSD-Python-Starter-Template |
+| `/ssd python-review` | ตรวจสอบ code Python — Architecture, HTTP methods, logging, DB, error handling |
+| `/ssd python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย + pytest verify |
+
+### Review & Refactor
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd frontend-review` | ตรวจสอบ code React/TypeScript — รายงาน violations พร้อม file:line |
+| `/ssd backend-review` | ตรวจสอบ code C#/.NET — รายงาน violations พร้อม file:line |
+| `/ssd frontend-refactor` | แก้ไข .tsx/.ts อย่างปลอดภัย ทีละไฟล์ + TypeScript compile check |
+| `/ssd backend-refactor` | แก้ไข .cs อย่างปลอดภัย ทีละไฟล์ + dotnet build check |
+
+### Git & Release
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd git-commit` | เขียน commit message, semantic versioning |
+| `/ssd git-flow` | Git Flow workflow, branch naming, pull request |
+| `/ssd release-it-setup` | ติดตั้ง release-it + สร้าง CHANGELOG.md + GitHub Draft Release อัตโนมัติ |
+
+### Specialized
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd contact-skill-gen` | แปลง setup document ของ shared library เป็น SKILL.md มาตรฐาน SSD |
+| `/ssd bug-auth-redirect` | แก้ bug หน้าขาว / redirect loop หลัง login (oidc-client-ts) |
+| `/ssd bug-version-checker` | แก้ bug ไม่เห็น version ใหม่หลัง deploy — JS chunk cache race condition |
 
 ## อ้างอิง
 

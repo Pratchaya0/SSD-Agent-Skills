@@ -1,0 +1,10 @@
+# Build output archives (harness dirs are committed — dist/ is not)
+dist/
+
+# Node
+node_modules/
+bun.lock
+
+# Local env
+.env
+.env.local

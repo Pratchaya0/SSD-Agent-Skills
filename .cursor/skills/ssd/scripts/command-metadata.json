@@ -1,0 +1,94 @@
+{
+  "frontend-setup": {
+    "description": "ตั้งค่าโปรเจค React/TypeScript ใหม่ — folder structure, package มาตรฐาน, naming conventions, environment variables",
+    "argumentHint": "[feature]"
+  },
+  "react-component": {
+    "description": "มาตรฐาน React functional component — Props typing, hooks, file naming, suffixes",
+    "argumentHint": "[component name]"
+  },
+  "react-form": {
+    "description": "Formik form implementation กับ MUI — validation, submit, error handling",
+    "argumentHint": "[form name]"
+  },
+  "react-state": {
+    "description": "Redux slice creation, dispatch patterns, redux-persist configuration",
+    "argumentHint": "[feature]"
+  },
+  "react-api": {
+    "description": "API client ด้วย Axios + React Query + NSwag — patterns, hooks, error handling",
+    "argumentHint": "[API name]"
+  },
+  "backend-setup": {
+    "description": "ตั้งค่าโปรเจค ASP.NET Core 6 ใหม่ — folder structure, dependencies, middleware",
+    "argumentHint": "[project name]"
+  },
+  "dotnet-controller": {
+    "description": "ASP.NET API controller patterns — routing, authorization, response format",
+    "argumentHint": "[controller name]"
+  },
+  "dotnet-service": {
+    "description": "Service layer, DTO, AutoMapper — patterns, interfaces, dependency injection",
+    "argumentHint": "[service name]"
+  },
+  "dotnet-infra": {
+    "description": "Serilog logging, Quartz background jobs, RestSharp HTTP clients",
+    "argumentHint": "[feature]"
+  },
+  "database": {
+    "description": "EF Core Reverse Engineer, AppDbContext, database naming conventions",
+    "argumentHint": "[entity name]"
+  },
+  "frontend-review": {
+    "description": "Review React/TypeScript code — checklist ครอบคลุม naming, types, hooks, API, forms",
+    "argumentHint": "[file or feature]"
+  },
+  "backend-review": {
+    "description": "Review C#/.NET code — authorization, naming, XML docs, AutoMapper, response format",
+    "argumentHint": "[file or feature]"
+  },
+  "frontend-refactor": {
+    "description": "Refactor .tsx/.ts files อย่างปลอดภัยพร้อม TypeScript compile check",
+    "argumentHint": "[file or feature]"
+  },
+  "backend-refactor": {
+    "description": "Refactor .cs files อย่างปลอดภัยพร้อม dotnet build check",
+    "argumentHint": "[file or feature]"
+  },
+  "python-review": {
+    "description": "Review Python code — Clean Architecture, HTTP methods, logging, SQLAlchemy, error handling",
+    "argumentHint": "[file or feature]"
+  },
+  "python-refactor": {
+    "description": "Refactor .py files อย่างปลอดภัยพร้อม pytest verification",
+    "argumentHint": "[file or feature]"
+  },
+  "python-starter": {
+    "description": "เริ่มโปรเจค FastAPI ใหม่ด้วย Clean/Hexagonal Architecture — structure, dependencies, patterns",
+    "argumentHint": "[project name]"
+  },
+  "git-commit": {
+    "description": "Conventional Commits, Semantic Versioning, breaking changes — เขียน commit message ตามมาตรฐาน SSD",
+    "argumentHint": "[scope]"
+  },
+  "git-flow": {
+    "description": "Git Flow workflow — branch naming, pull request standards, merge strategy",
+    "argumentHint": "[feature or release]"
+  },
+  "contact-skill-gen": {
+    "description": "สร้าง SKILL.md สำหรับ shared libraries และ contact services",
+    "argumentHint": "[library name]"
+  },
+  "bug-auth-redirect": {
+    "description": "แก้ white screen / auth redirect loop — oidc-client-ts, react-ts-template-2023",
+    "argumentHint": ""
+  },
+  "bug-version-checker": {
+    "description": "แก้ version cache race condition — JS chunk cache, version checker",
+    "argumentHint": ""
+  },
+  "release-it-setup": {
+    "description": "ตั้งค่า release-it v17 + @release-it/conventional-changelog สำหรับ GitHub releases",
+    "argumentHint": "[project]"
+  }
+}
