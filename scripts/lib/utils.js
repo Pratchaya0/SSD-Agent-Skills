@@ -116,6 +116,7 @@ export function readSourceFiles(rootDir) {
     description: frontmatter.description || '',
     userInvocable: frontmatter['user-invocable'] === true || frontmatter['user-invocable'] === 'true',
     argumentHint: frontmatter['argument-hint'] || '',
+    allowedTools: Array.isArray(frontmatter['allowed-tools']) ? frontmatter['allowed-tools'] : [],
     body,
     filePath: skillMdPath,
     references,

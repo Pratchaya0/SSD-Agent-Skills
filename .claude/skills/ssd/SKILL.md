@@ -3,6 +3,11 @@ name: ssd
 description: "มาตรฐานการพัฒนาซอฟต์แวร์ของทีม SSD: React/TypeScript, .NET Core, Python, Git — ใช้เมื่อเขียนโค้ด, review, refactor, ตั้งค่าโปรเจค, หรือถามเรื่อง conventions ของ Smile Solution Development"
 user-invocable: true
 argument-hint: <command> [target]
+allowed-tools:
+  - AskUserQuestion
+  - Read
+  - Glob
+  - Bash
 ---
 
 # SSD Agent Skills

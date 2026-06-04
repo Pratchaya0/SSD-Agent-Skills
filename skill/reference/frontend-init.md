@@ -18,6 +18,22 @@
 
 ---
 
+## ขั้นตอนที่ 0: เก็บข้อมูลโปรเจค (ถามก่อนเริ่มทุกครั้ง)
+
+ใช้ **AskUserQuestion tool** ถามข้อมูลต่อไปนี้ก่อนดำเนินการใดๆ ส่งคำถามได้ครั้งละ 1-4 ข้อ:
+
+**ชุดที่ 1** — ข้อมูลพื้นฐาน:
+- "ชื่อโปรเจค (GitHub repo name เช่น LineOAPASAdmin)" — header: "Project Name"
+- "ชื่อระบบภาษาไทย (สำหรับ `<title>` เช่น ระบบจัดการ Line OA)" — header: "App Title"
+- "URL path บน server (เช่น line-oa-pas-admin)" — header: "Base Path"
+- "API name สำหรับ URL (เช่น line-oa-pas-api)" — header: "API Name"
+
+**ชุดที่ 2** — ข้อมูล SSO:
+- "SSO Client ID พร้อมหรือยัง?" — header: "SSO Client ID", options: ["พร้อมแล้ว — จะระบุในขั้นตอนถัดไป", "ยังไม่มี — ใช้ PLACEHOLDER ไปก่อน"]
+- "API Scope สำหรับ SSO (เช่น line-oa-pas-api)" — header: "API Scope"
+
+---
+
 ## ขั้นตอนที่ 1: Clone และ Setup
 
 ```bash

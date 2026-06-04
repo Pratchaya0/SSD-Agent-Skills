@@ -7,7 +7,7 @@ export const PROVIDERS = {
     providerTags: ['claude-code', 'claude'],
     configDir: '.claude',
     displayName: 'Claude Code',
-    frontmatterFields: ['user-invocable', 'argument-hint'],
+    frontmatterFields: ['user-invocable', 'argument-hint', 'allowed-tools'],
   },
   cursor: {
     provider: 'cursor',

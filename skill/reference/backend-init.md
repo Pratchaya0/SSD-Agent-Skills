@@ -18,6 +18,23 @@
 
 ---
 
+## ขั้นตอนที่ 0: เก็บข้อมูลโปรเจค (ถามก่อนเริ่มทุกครั้ง)
+
+ใช้ **AskUserQuestion tool** ถามข้อมูลต่อไปนี้ก่อนดำเนินการใดๆ:
+
+**ชุดที่ 1** — ข้อมูลพื้นฐาน:
+- "ชื่อโปรเจค / Project Name (เช่น LineOAPA.Admin.API)" — header: "Project Name"
+- "ชื่อ Database (เช่น LineOAPAS)" — header: "Database"
+- "Port สำหรับ local development (เช่น 5010)" — header: "Dev Port"
+
+**ชุดที่ 2** — ข้อมูล Auth:
+- "Project.CleanTitle สำหรับ OAuth Audience (เช่น LineOAPAAdminAPI)" — header: "CleanTitle"
+- "Database server พร้อมหรือยัง?" — header: "DB Server", options: ["พร้อมแล้ว — จะระบุ connection string", "ยังไม่มี — ใช้ (local) ไปก่อน"]
+
+รวบรวมข้อมูลครบแล้วจึงดำเนินการขั้นตอนที่ 1 เป็นต้นไป
+
+---
+
 ## ขั้นตอนที่ 1: ดาวน์โหลด Template
 
 ```bash

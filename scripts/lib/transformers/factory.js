@@ -21,6 +21,11 @@ const FIELD_SPECS = {
     yamlKey: 'argument-hint',
     condition: (skill) => skill.userInvocable && skill.argumentHint,
   },
+  'allowed-tools': {
+    sourceKey: 'allowedTools',
+    yamlKey: 'allowed-tools',
+    condition: (skill) => skill.allowedTools && skill.allowedTools.length > 0,
+  },
 };
 
 /**
