@@ -17,6 +17,7 @@ const EXPECTED_COMMANDS = [
   'python-review', 'python-refactor', 'python-starter',
   'git-commit', 'git-flow',
   'contact-skill-gen', 'bug-auth-redirect', 'bug-version-checker', 'release-it-setup',
+  'python-database',
 ];
 
 describe('Skill router — SKILL.src.md', () => {

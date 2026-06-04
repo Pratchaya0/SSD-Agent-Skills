@@ -87,6 +87,10 @@
     "description": "แก้ version cache race condition — JS chunk cache, version checker",
     "argumentHint": ""
   },
+  "python-database": {
+    "description": "PostgreSQL + SQLAlchemy 2.x: naming conventions, ORM models, async session, repository pattern, Alembic migration",
+    "argumentHint": "[entity or table name]"
+  },
   "release-it-setup": {
     "description": "ตั้งค่า release-it v17 + @release-it/conventional-changelog สำหรับ GitHub releases",
     "argumentHint": "[project]"

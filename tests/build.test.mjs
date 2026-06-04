@@ -20,7 +20,7 @@ const EXPECTED_REFERENCES = [
   'database', 'dotnet-controller', 'dotnet-infra', 'dotnet-service',
   'frontend-refactor', 'frontend-review', 'frontend-setup',
   'git-commit', 'git-flow',
-  'python-refactor', 'python-review', 'python-starter',
+  'python-refactor', 'python-review', 'python-starter', 'python-database',
   'react-api', 'react-component', 'react-form', 'react-state',
   'release-it-setup',
 ];

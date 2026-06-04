@@ -43,6 +43,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 | `python-starter` | เริ่มโปรเจค FastAPI ใหม่ด้วย Clean Architecture |
 | `python-review` | Review Python code (architecture, HTTP methods, logging, SQLAlchemy) |
 | `python-refactor` | Refactor .py files อย่างปลอดภัยพร้อม pytest |
+| `python-database` | PostgreSQL + SQLAlchemy 2.x: naming, ORM models, Alembic migration |
 
 ### Review & Refactor
 

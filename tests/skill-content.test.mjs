@@ -36,6 +36,7 @@ const TECH_KEYWORDS = {
   'database':          'EF Core',
   'python-starter':    'FastAPI',
   'python-review':     'SQLAlchemy',
+  'python-database':   'SQLAlchemy',
   'git-commit':        'Conventional Commits',
   'git-flow':          'Git Flow',
   'release-it-setup':  'release-it',
