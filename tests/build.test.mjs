@@ -18,6 +18,7 @@ const EXPECTED_REFERENCES = [
   'backend-refactor', 'backend-review', 'backend-setup',
   'bug-auth-redirect', 'bug-version-checker', 'contact-skill-gen',
   'database', 'dotnet-controller', 'dotnet-infra', 'dotnet-service',
+  'frontend-init', 'backend-init',
   'frontend-refactor', 'frontend-review', 'frontend-setup',
   'git-commit', 'git-flow',
   'python-refactor', 'python-review', 'python-starter', 'python-database',

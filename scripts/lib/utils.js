@@ -215,6 +215,7 @@ export function stripRuleMarkers(content) {
 
 /** SSD sub-commands list (used in {{available_commands}}) */
 const SSD_SUB_COMMANDS = [
+  'frontend-init', 'backend-init',
   'frontend-setup', 'react-component', 'react-form', 'react-state', 'react-api',
   'backend-setup', 'dotnet-controller', 'dotnet-service', 'dotnet-infra', 'database',
   'frontend-review', 'backend-review', 'frontend-refactor', 'backend-refactor',

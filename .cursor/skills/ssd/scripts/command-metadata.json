@@ -1,4 +1,12 @@
 {
+  "frontend-init": {
+    "description": "เริ่มโปรเจค Frontend ใหม่จาก react-ts-template-2023 v1.2.0 — clone, rename, ตั้งค่า env, Jenkins-sensitive files",
+    "argumentHint": "[project name]"
+  },
+  "backend-init": {
+    "description": "เริ่มโปรเจค Backend ใหม่จาก Net60_ApiTemplate_2023 (202306) — rename, namespace, appsettings, Jenkins path",
+    "argumentHint": "[project name]"
+  },
   "frontend-setup": {
     "description": "ตั้งค่าโปรเจค React/TypeScript ใหม่ — folder structure, package มาตรฐาน, naming conventions, environment variables",
     "argumentHint": "[feature]"

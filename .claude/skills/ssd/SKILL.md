@@ -22,6 +22,8 @@ argument-hint: <command> [target]
 
 | Command | รายละเอียด |
 |---------|-----------|
+| `frontend-init` | เริ่มโปรเจค Frontend ใหม่จาก react-ts-template-2023 v1.2.0 |
+| `backend-init` | เริ่มโปรเจค Backend ใหม่จาก Net60_ApiTemplate_2023 (202306) |
 | `frontend-setup` | ตั้งค่าโปรเจค React/TS ใหม่ — folder structure, tools, naming conventions |
 | `react-component` | มาตรฐาน React functional component, Props typing, hooks |
 | `react-form` | Formik form implementation กับ MUI |

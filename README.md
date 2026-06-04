@@ -34,6 +34,13 @@ npx skills add github:Pratchaya0/SSD-Agent-Skills/skills/ssd-git-commit
 
 ## Commands ที่มี (23 commands)
 
+### เริ่มต้นโปรเจคใหม่
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd frontend-init` | เริ่มโปรเจค Frontend ใหม่จาก react-ts-template-2023 v1.2.0 |
+| `/ssd backend-init` | เริ่มโปรเจค Backend ใหม่จาก Net60_ApiTemplate_2023 (202306) |
+
 ### Frontend (React + TypeScript)
 
 | Command | ใช้เมื่อ |
