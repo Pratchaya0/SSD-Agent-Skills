@@ -13,7 +13,7 @@
 1. Clone จาก template release `v1.2.0` เท่านั้น — ห้ามสร้างโปรเจคจาก Vite หรือ CRA
 2. ห้ามแก้ไข `public/web.config` — IIS อ่านไฟล์นี้ตรงๆ สำหรับ SPA routing
 3. ห้ามลบหรือเปลี่ยนชื่อ `callback.html` และ `silent-callback.html` — SSO auth flow ใช้ path นี้
-4. ต้องตั้งค่า `.env` ทุกไฟล์ให้ครบก่อน push ครั้งแรก
+4. แก้ไขใน `.env*` เฉพาะ `VITE_APP_NAME` และ `VITE_APP_VERSION` เท่านั้น — ห้ามแก้ `VITE_BASE_URL`, `VITE_API_URL`, `VITE_APIGW_BASEURL` และ `VITE_SSO_*` ทุกตัว ให้คงค่า default จาก template ไว้
 5. ไฟล์ใน `src/app/layout/` และ `src/app/modules/_auth/` ห้ามแก้โดยไม่จำเป็น — Template code
 
 ---
@@ -23,14 +23,8 @@
 ใช้ **AskUserQuestion tool** ถามข้อมูลต่อไปนี้ก่อนดำเนินการใดๆ ส่งคำถามได้ครั้งละ 1-4 ข้อ:
 
 **ชุดที่ 1** — ข้อมูลพื้นฐาน:
-- "ชื่อโปรเจค (GitHub repo name เช่น LineOAPASAdmin)" — header: "Project Name"
-- "ชื่อระบบภาษาไทย (สำหรับ `<title>` เช่น ระบบจัดการ Line OA)" — header: "App Title"
-- "URL path บน server (เช่น line-oa-pas-admin)" — header: "Base Path"
-- "API name สำหรับ URL (เช่น line-oa-pas-api)" — header: "API Name"
-
-**ชุดที่ 2** — ข้อมูล SSO:
-- "SSO Client ID พร้อมหรือยัง?" — header: "SSO Client ID", options: ["พร้อมแล้ว — จะระบุในขั้นตอนถัดไป", "ยังไม่มี — ใช้ PLACEHOLDER ไปก่อน"]
-- "API Scope สำหรับ SSO (เช่น line-oa-pas-api)" — header: "API Scope"
+- "ชื่อโปรเจค (GitHub repo name เช่น ExampleProject)" — header: "Project Name"
+- "ชื่อระบบภาษาไทย (สำหรับ `<title>` เช่น ระบบ Example App Name)" — header: "App Title"
 
 ---
 
@@ -67,36 +61,15 @@ npm install
 
 ## ขั้นตอนที่ 3: ตั้งค่า Environment Variables
 
-แก้ไขทั้ง 4 ไฟล์: `.env`, `.env.dev`, `.env.uat`, `.env.production`
+แก้ไข **เฉพาะ 2 ค่านี้เท่านั้น** ในทุก 4 ไฟล์ (`.env`, `.env.dev`, `.env.uat`, `.env.production`):
 
 ```bash
-# .env (ค่า base / local dev)
-VITE_APP_NAME = "{ชื่อระบบ}"
+VITE_APP_NAME = "{ชื่อระบบภาษาไทย}"
 VITE_APP_VERSION = "1.0.0"
-VITE_BASE_URL = "http://localhost:5173"
-VITE_API_URL = "https://dev-api.siamsmile.co.th/{project-api-name}"
-VITE_SSO_ISSUER = "https://demoauthserver.devsiamsmile.com"
-VITE_SSO_CLIENT_ID = "{client-id-จาก-auth-server}"
-VITE_SSO_SCOPE = "openid profile roles email {api-scope}"
 ```
 
-```bash
-# .env.dev
-VITE_BASE_URL = "https://dev.siamsmile.co.th/{project-path}"
-VITE_API_URL = "https://dev-api.siamsmile.co.th/{project-api-name}"
-```
-
-```bash
-# .env.uat
-VITE_BASE_URL = "https://uat.siamsmile.co.th/{project-path}"
-VITE_API_URL = "https://uat-api.siamsmile.co.th/{project-api-name}"
-```
-
-```bash
-# .env.production
-VITE_BASE_URL = "https://app.siamsmile.co.th/{project-path}"
-VITE_API_URL = "https://api.siamsmile.co.th/{project-api-name}"
-```
+> ⚠️ **ห้ามแก้ไขค่าต่อไปนี้** — ให้คงค่า default จาก template ไว้ทุกตัว:
+> `VITE_BASE_URL`, `VITE_API_URL`, `VITE_APIGW_BASEURL`, `VITE_SSO_ISSUER`, `VITE_SSO_CLIENT_ID`, `VITE_SSO_SCOPE` และ `VITE_SSO_*` ทุกตัว
 
 ---
 
@@ -176,7 +149,8 @@ npm run build          # ตรวจสอบ production build
 ## Checklist ก่อน Push ครั้งแรก
 
 - [ ] `index.html` — title และ og tags ถูกต้อง
-- [ ] `.env*` ทุกไฟล์มีค่าที่ถูกต้อง
+- [ ] `.env*` ทุกไฟล์ — แก้เฉพาะ `VITE_APP_NAME` และ `VITE_APP_VERSION`
+- [ ] `VITE_BASE_URL`, `VITE_API_URL`, `VITE_SSO_*` ยังคงค่า default จาก template
 - [ ] `npm run start` ผ่าน (login ได้)
 - [ ] `npm run build` ผ่าน (ไม่มี TypeScript error)
 - [ ] `callback.html` และ `silent-callback.html` ยังอยู่ที่ root
