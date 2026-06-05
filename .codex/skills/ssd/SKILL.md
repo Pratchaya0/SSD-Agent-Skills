@@ -51,6 +51,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 
 | Command | รายละเอียด |
 |---------|-----------|
+| `ts-fix-unused` | แก้ TS6133/TS6196 build errors — @ts-nocheck สำหรับ NSwag files, @ts-ignore สำหรับ manual code |
 | `frontend-review` | Review React/TypeScript code |
 | `backend-review` | Review C#/.NET code |
 | `frontend-refactor` | Refactor .tsx/.ts files อย่างปลอดภัย |

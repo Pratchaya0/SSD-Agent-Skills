@@ -47,6 +47,10 @@
     "description": "EF Core Reverse Engineer, AppDbContext, database naming conventions",
     "argumentHint": "[entity name]"
   },
+  "ts-fix-unused": {
+    "description": "แก้ TS6133/TS6196 build errors อัตโนมัติ — // @ts-nocheck สำหรับ NSwag generated files, // @ts-ignore สำหรับ manual code",
+    "argumentHint": "[build:uat | build:dev | build]"
+  },
   "frontend-review": {
     "description": "Review React/TypeScript code — checklist ครอบคลุม naming, types, hooks, API, forms",
     "argumentHint": "[file or feature]"

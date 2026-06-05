@@ -11,7 +11,7 @@ const REF_DIR = path.join(ROOT, 'skill', 'reference');
 const METADATA = path.join(ROOT, 'skill', 'scripts', 'command-metadata.json');
 
 const EXPECTED_COMMANDS = [
-  'frontend-init', 'backend-init',
+  'frontend-init', 'backend-init', 'ts-fix-unused',
   'frontend-setup', 'react-component', 'react-form', 'react-state', 'react-api',
   'backend-setup', 'dotnet-controller', 'dotnet-service', 'dotnet-infra', 'database',
   'frontend-review', 'backend-review', 'frontend-refactor', 'backend-refactor',

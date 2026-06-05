@@ -25,6 +25,7 @@ const EXEMPT_FROM_REQUIRED_SECTIONS = new Set([
 // Commands that document specific tech and must contain their key term
 const TECH_KEYWORDS = {
   'frontend-init':     'web.config',
+  'ts-fix-unused':     'TS6133',
   'backend-init':      'Jenkins',
   'frontend-setup':    'TypeScript',
   'react-component':   'React',
