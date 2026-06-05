@@ -70,6 +70,12 @@ npx skills add github:Pratchaya0/SSD-Agent-Skills/skills/ssd-git-commit
 | `/ssd python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย + pytest verify |
 | `/ssd python-database` | PostgreSQL + SQLAlchemy 2.x: naming, ORM models, async session, Alembic migration |
 
+### TypeScript
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd ts-fix-unused` | แก้ TS6133/TS6196 build errors อัตโนมัติ — @ts-nocheck สำหรับ NSwag files, @ts-ignore สำหรับ manual code |
+
 ### Review & Refactor
 
 | Command | ใช้เมื่อ |
