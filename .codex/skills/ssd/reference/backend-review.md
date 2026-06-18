@@ -34,6 +34,8 @@
 |----|-----|-----|
 | Route attribute | `[Route("api/order-header")]` (kebab-case) | `[Route("api/OrderHeader")]`, `[Route("api/order_header")]` |
 | HTTP method Name | `[HttpGet(Name = "GetOrders")]` | `[HttpGet]` (ไม่มี Name) |
+| ใช้เฉพาะ GET และ POST | `[HttpGet]`, `[HttpPost]` | `[HttpPut]`, `[HttpPatch]`, `[HttpDelete]` |
+| Update/Delete ต้องใช้ POST + action path | `[HttpPost("{id}/update")]` | `[HttpPut("{id}")]` |
 | XML comment | `/// <summary>...</summary>` บน method | ไม่มี XML comment |
 | Return type | `ActionResult<ServiceResponse<T>>` หรือ `IActionResult` + `ResponseResult` | return DTO ตรงๆ |
 | Controller-level auth | `[Authorize]` บน class | ไม่มี `[Authorize]` |
@@ -44,7 +46,7 @@
 | กฎ | ถูก | ผิด |
 |----|-----|-----|
 | GET method | Debug log อย่างน้อย 1 ครั้งเมื่อเข้า method | ไม่มี log เลย |
-| POST/PUT/DELETE | Information log เมื่อสำเร็จ | Debug เมื่อสำเร็จ, หรือไม่มี log |
+| POST | Information log เมื่อสำเร็จ | Debug เมื่อสำเร็จ, หรือไม่มี log |
 | Log body | Debug | Information หรือสูงกว่า |
 | ห้าม log ข้อมูลส่วนบุคคล | Mask ก่อน หรือไม่ log | log เลขบัตร, เบอร์โทร, รหัสผ่านตรงๆ |
 | ใช้ ForContext สำหรับ operation ซับซ้อน | `_logger.ForContext("CollationId", Guid.NewGuid())` | log แยกโดยไม่ผูก trace ID |

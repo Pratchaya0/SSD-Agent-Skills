@@ -111,6 +111,6 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 **ข้อห้ามสากล:**
 - ห้ามใช้ `any` type ใน TypeScript
 - ห้ามใช้ f-string ใน logging (Python)
-- ห้าม DELETE/PUT/PATCH ใน Python API — ใช้ POST with action path
+- ห้าม DELETE/PUT/PATCH ใน API ทุก stack (C#/.NET, Python) — มาตรฐานบริษัทใช้ REST API ไม่ใช่ RESTful มี HTTP method แค่ GET กับ POST เท่านั้น ใช้ POST + action path เช่น `{id}/update`, `{id}/delete`
 
 config file: GEMINI.md

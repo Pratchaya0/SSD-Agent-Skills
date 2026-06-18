@@ -14,6 +14,7 @@ Controller ของ SSD เป็น ASP.NET Core Controller ที่ทำห
 5. Method ที่อ่านข้อมูล — Log ระดับ Debug อย่างน้อย 1 ครั้ง
 6. Method ที่เปลี่ยนแปลงข้อมูล — Log ระดับ Information และเก็บ body ทั้งหมด
 7. ใช้ `ClaimPermission` attribute เมื่อต้องการจำกัดสิทธิ์
+8. **ห้ามใช้ `[HttpPut]`, `[HttpPatch]`, `[HttpDelete]`** — มาตรฐานบริษัทใช้ REST API (ไม่ใช่ RESTful) คือมีแค่ `GET` กับ `POST` เท่านั้น การ update/delete ให้ใช้ `[HttpPost]` พร้อม action suffix ต่อท้าย route เช่น `{id}/update`, `{id}/delete`
 
 ## โครงสร้าง Controller มาตรฐาน
 
@@ -97,7 +98,8 @@ namespace MyProject.Controllers
             return ResponseResult.Success(response, "Create call result success");
         }
 
-        [HttpPut("{callResultId}", Name = "CallResultUpdate")]
+        // Update/Delete ใช้ HttpPost เสมอ — ห้ามใช้ HttpPut/HttpPatch/HttpDelete
+        [HttpPost("{callResultId}/update", Name = "CallResultUpdate")]
         [ClaimPermission(Permission.Admin, Permission.Manager)]
         public async Task<ServiceResponse<CallResultResponseDto?>> Update(
             int callResultId,
@@ -115,7 +117,7 @@ namespace MyProject.Controllers
             return ResponseResult.Success(response, $"Update call result {callResultId} success");
         }
 
-        [HttpDelete("{callResultId}", Name = "CallResultDelete")]
+        [HttpPost("{callResultId}/delete", Name = "CallResultDelete")]
         [ClaimPermission(Permission.Admin)]
         public async Task<ServiceResponse<CallResultResponseDto?>> Delete(
             int callResultId,
@@ -164,8 +166,10 @@ public class Permission
 | Get all | `[HttpGet(Name = "CallResultGetAll")]` |
 | Get by id | `[HttpGet("{id}", Name = "CallResultGetById")]` |
 | Create | `[HttpPost(Name = "CallResultCreate")]` |
-| Update | `[HttpPut("{id}", Name = "CallResultUpdate")]` |
-| Delete | `[HttpDelete("{id}", Name = "CallResultDelete")]` |
+| Update | `[HttpPost("{id}/update", Name = "CallResultUpdate")]` |
+| Delete | `[HttpPost("{id}/delete", Name = "CallResultDelete")]` |
+
+> มาตรฐานบริษัทใช้ REST API (ไม่ใช่ RESTful) — มี HTTP method แค่ `GET` และ `POST` เท่านั้น ห้ามใช้ `PUT`, `PATCH`, `DELETE` ไม่ว่ากรณีใด
 
 ## Logging Guidelines ใน Controller
 
@@ -173,6 +177,6 @@ public class Permission
 |-----------|-----------|
 | เข้า method ทุกครั้ง | Debug |
 | อ่านข้อมูล (GET) | Debug |
-| เปลี่ยนแปลงข้อมูล (POST/PUT/DELETE) — สำเร็จ | Information |
+| เปลี่ยนแปลงข้อมูล (POST) — สำเร็จ | Information |
 | Log body ของ request/response | Debug |
 | ข้อมูลส่วนบุคคล | **ห้าม** log ทุกกรณี |

@@ -12,6 +12,7 @@ SSD ใช้ Axios สำหรับ HTTP request และ TanStack React Que
 3. ไฟล์ React Query hooks ตั้งชื่อตาม Controller และลงท้ายด้วย `.query.ts`
 4. ต้องประกาศ `queryKeys` เป็น object สำหรับทุก query ไฟล์
 5. ต้องจัดการ error response จาก API เสมอ (`isSuccess` check)
+6. **ห้ามเรียก `axios.put`, `axios.patch`, `axios.delete`** — มาตรฐานบริษัทใช้ REST API (ไม่ใช่ RESTful) คือมีแค่ `GET` กับ `POST` เท่านั้น การ update/delete ให้ใช้ `axios.post` พร้อม action suffix ต่อท้าย URL เช่น `/order/{id}/update`, `/order/{id}/delete`
 
 ## โครงสร้างไฟล์ API
 
@@ -116,13 +117,13 @@ export const postOrderCreate = (
         });
 };
 
-// PUT — อัพเดทข้อมูล
-export const putOrderUpdate = (
+// POST — อัพเดทข้อมูล (มาตรฐานบริษัทใช้ REST API ไม่ใช่ RESTful — มีแค่ GET/POST ห้ามใช้ PUT/PATCH/DELETE)
+export const postOrderUpdate = (
     id: number,
     orderRequestDto: OrderRequestDto
 ): Promise<OrderResponseDto> => {
     return axios
-        .put(`${API_URL}/order/${id}`, orderRequestDto)
+        .post(`${API_URL}/order/${id}/update`, orderRequestDto)
         .catch((_error: any) => {
             if (_error.response) return _error.response;
             else throw _error;
