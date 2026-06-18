@@ -14,7 +14,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 - `$ssd git-commit` — เขียน commit message ตามมาตรฐาน
 - `$ssd python-review` — review Python code
 
-## คำสั่งที่มี (23 commands)
+## คำสั่งที่มี (31 commands)
 
 ### Frontend (React + TypeScript)
 
@@ -72,6 +72,15 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 | `contact-skill-gen` | สร้าง SKILL.md สำหรับ shared libraries |
 | `bug-auth-redirect` | แก้ white screen / auth redirect loop |
 | `bug-version-checker` | แก้ version cache race condition |
+
+### Doctor (Project Health)
+
+| Command | รายละเอียด |
+|---------|-----------|
+| `frontend-doctor` | ตรวจสุขภาพโปรเจค React/TypeScript — dependencies, config, folder structure, ENV pattern |
+| `backend-doctor` | ตรวจสุขภาพโปรเจค ASP.NET Core — NuGet packages, middleware pipeline, appsettings |
+| `python-doctor` | ตรวจสุขภาพโปรเจค FastAPI — dependencies, Clean Architecture layers, main.py wiring |
+| `db-doctor` | ตรวจสุขภาพ Database schema — standard columns, datetime2, naming, SP prefix |
 
 ## วิธีตอบสนองต่อคำสั่ง
 

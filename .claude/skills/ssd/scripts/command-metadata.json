@@ -106,5 +106,21 @@
   "release-it-setup": {
     "description": "ตั้งค่า release-it v17 + @release-it/conventional-changelog สำหรับ GitHub releases",
     "argumentHint": "[project]"
+  },
+  "frontend-doctor": {
+    "description": "ตรวจสุขภาพโปรเจค React/TypeScript — dependencies, tsconfig, folder structure, window.__CONST__ENV__, Redux typed hooks",
+    "argumentHint": "[project path or .]"
+  },
+  "backend-doctor": {
+    "description": "ตรวจสุขภาพโปรเจค ASP.NET Core — NuGet packages, Program.cs middleware pipeline, appsettings.json, AutoMapper, EF Core",
+    "argumentHint": "[project path or .]"
+  },
+  "python-doctor": {
+    "description": "ตรวจสุขภาพโปรเจค FastAPI Clean Architecture — dependencies, layers, main.py lifespan, DomainError, Alembic",
+    "argumentHint": "[project path or .]"
+  },
+  "db-doctor": {
+    "description": "ตรวจสุขภาพ Database schema — standard columns, datetime2, naming conventions, stored procedure prefix",
+    "argumentHint": "[.sql file, DDL, or project path]"
   }
 }

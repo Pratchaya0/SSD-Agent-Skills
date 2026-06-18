@@ -19,6 +19,7 @@ const EXPECTED_COMMANDS = [
   'git-commit', 'git-flow',
   'contact-skill-gen', 'bug-auth-redirect', 'bug-version-checker', 'release-it-setup',
   'python-database',
+  'frontend-doctor', 'backend-doctor', 'python-doctor', 'db-doctor',
 ];
 
 describe('Skill router — SKILL.src.md', () => {
@@ -31,7 +32,7 @@ describe('Skill router — SKILL.src.md', () => {
     assert.ok(content.includes('user-invocable: true'), 'Missing user-invocable: true');
   });
 
-  test('SKILL.src.md mentions all 23 commands', () => {
+  test('SKILL.src.md mentions all 31 commands', () => {
     const content = fs.readFileSync(SKILL_SRC, 'utf-8');
     for (const cmd of EXPECTED_COMMANDS) {
       assert.ok(
@@ -41,7 +42,7 @@ describe('Skill router — SKILL.src.md', () => {
     }
   });
 
-  test('all 23 reference files exist in skill/reference/', () => {
+  test('all 31 reference files exist in skill/reference/', () => {
     for (const cmd of EXPECTED_COMMANDS) {
       const refPath = path.join(REF_DIR, `${cmd}.md`);
       assert.ok(
@@ -64,7 +65,7 @@ describe('Skill router — SKILL.src.md', () => {
     }
   });
 
-  test('command-metadata.json has all 23 entries', () => {
+  test('command-metadata.json has all 31 entries', () => {
     assert.ok(fs.existsSync(METADATA), 'skill/scripts/command-metadata.json not found');
     const meta = JSON.parse(fs.readFileSync(METADATA, 'utf-8'));
     for (const cmd of EXPECTED_COMMANDS) {

@@ -43,6 +43,10 @@ const TECH_KEYWORDS = {
   'git-commit':        'Conventional Commits',
   'git-flow':          'Git Flow',
   'release-it-setup':  'release-it',
+  'frontend-doctor':   'package.json',
+  'backend-doctor':    'Program.cs',
+  'python-doctor':     'lifespan',
+  'db-doctor':         'datetime2',
 };
 
 describe('Reference file content', () => {
