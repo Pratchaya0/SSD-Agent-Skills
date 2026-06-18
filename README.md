@@ -22,6 +22,17 @@ npx skills add github:Pratchaya0/SSD-Agent-Skills/skills/ssd-git-commit
 # ... ทีละ skill
 ```
 
+## อัปเดต
+
+โปรเจคที่ติดตั้ง `/ssd` ไปแล้วจะมีไฟล์ `skills-lock.json` เก็บ source + hash ไว้ — รันคำสั่งนี้ในโปรเจคนั้นเพื่อดึงเวอร์ชันล่าสุดจาก GitHub:
+
+```bash
+npx skills update ssd      # อัปเดตเฉพาะ skill ssd
+npx skills update          # อัปเดตทุก skill ที่ติดตั้งไว้ในโปรเจค
+```
+
+คำสั่งนี้เทียบ `computedHash` ใน `skills-lock.json` กับเวอร์ชันล่าสุดบน GitHub แล้วเขียนไฟล์ skill ทับถ้ามีการเปลี่ยนแปลง — commit ไฟล์ที่เปลี่ยน (รวม `skills-lock.json`) ในโปรเจคนั้นตามปกติ
+
 ## วิธีใช้งาน
 
 ```
