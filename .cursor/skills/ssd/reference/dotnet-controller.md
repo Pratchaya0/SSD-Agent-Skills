@@ -15,6 +15,7 @@ Controller ของ SSD เป็น ASP.NET Core Controller ที่ทำห
 6. Method ที่เปลี่ยนแปลงข้อมูล — Log ระดับ Information และเก็บ body ทั้งหมด
 7. ใช้ `ClaimPermission` attribute เมื่อต้องการจำกัดสิทธิ์
 8. **ห้ามใช้ `[HttpPut]`, `[HttpPatch]`, `[HttpDelete]`** — มาตรฐานบริษัทใช้ REST API (ไม่ใช่ RESTful) คือมีแค่ `GET` กับ `POST` เท่านั้น การ update/delete ให้ใช้ `[HttpPost]` พร้อม action suffix ต่อท้าย route เช่น `{id}/update`, `{id}/delete`
+9. **ห้าม hardcode OAuth Scope/Audience** — ถ้าโค้ดต้องอ้างอิงค่า Scope/Audience (Swagger OAuth2 definition, policy ตรวจ scope claim) ต้องอ่านค่าจริงจาก `appsettings.json` ของโปรเจคนั้นเสมอ ห้ามก็อปค่าจาก template หรือโปรเจคอื่น (เช่น `net60_apitemplate_2023`) ถ้ายังไม่มีค่าจริง (appsettings.json ยังไม่ตั้งค่า OAuth หรือเขียนโค้ดตัวอย่างเดี่ยวๆ) ให้ fallback เป็น `demo_pos`
 
 ## โครงสร้าง Controller มาตรฐาน
 
@@ -157,6 +158,30 @@ public class Permission
 ### ขั้นตอนการตั้งค่า Permission
 1. ปรึกษา Dev Lead เพื่อสร้าง Google Sheet สำหรับ API Registration
 2. Copy ข้อมูลจาก Sheet ไปยัง `appsettings.json` และ `Permission.cs`
+
+## OAuth Scope (เมื่อ `OAuth.EnableOAuth: true`)
+
+ถ้าโปรเจคเปิดใช้ OAuth (`appsettings.json` → `OAuth.EnableOAuth: true`) และต้องเขียนโค้ดที่อ้างอิง Scope/Audience เช่น Swagger OAuth2 security definition หรือ policy ที่ตรวจ scope claim:
+
+1. **อ่านค่าจริงจาก `appsettings.json` ของโปรเจคนั้นเสมอ** — `OAuth.Audience` และ key แรกใน `OAuth.Scopes` คือค่าที่ต้องใช้ ห้าม hardcode ค่าจาก template (`net60_apitemplate_2023`) หรือจากโปรเจคอื่น เพราะแต่ละโปรเจคมีค่าต่างกัน
+2. **ถ้าไม่มี `appsettings.json` ให้อ่าน หรือยังไม่ได้ลงทะเบียน OAuth จริง** (เช่น เขียนโค้ดตัวอย่างเดี่ยวๆ หรือโปรเจคใหม่ที่ยังไม่ผูก auth server) — ใช้ `demo_pos` เป็นค่า fallback (scope สำหรับ demo auth server `https://demoauthserver.devsiamsmile.com`)
+
+ตัวอย่าง Swagger OAuth2 security definition — ค่า Scope มาจาก config เสมอ ไม่ hardcode ในโค้ด:
+```csharp
+c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+{
+    Type = SecuritySchemeType.OAuth2,
+    Flows = new OpenApiOAuthFlows
+    {
+        Implicit = new OpenApiOAuthFlow
+        {
+            AuthorizationUrl = new Uri($"{builder.Configuration["OAuth:Authority"]}/connect/authorize"),
+            // Scopes มาจาก appsettings.json — ห้าม hardcode ค่า key เอง
+            Scopes = builder.Configuration.GetSection("OAuth:Scopes").Get<Dictionary<string, string>>()
+        }
+    }
+});
+```
 
 ## Route Naming Convention
 

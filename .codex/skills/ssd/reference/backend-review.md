@@ -73,6 +73,7 @@
 |----|-----|-----|
 | Controller class | `[Authorize]` | ไม่มี `[Authorize]` (เว้นแต่เป็น public endpoint) |
 | Protected method | `[ClaimPermission("permission-name")]` | ไม่มี permission check |
+| OAuth Scope/Audience (ถ้า `EnableOAuth: true`) | อ้างอิงค่าจาก `appsettings.json` ของโปรเจคจริง | hardcode scope/audience จาก template หรือโปรเจคอื่น (เช่น `net60_apitemplate_2023` ที่ไม่ตรงกับโปรเจคปัจจุบัน) |
 
 ### Category 7: Modifier Order
 
