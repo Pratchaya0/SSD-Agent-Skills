@@ -21,7 +21,7 @@ allowed-tools:
 - `{{command_prefix}}ssd git-commit` — เขียน commit message ตามมาตรฐาน
 - `{{command_prefix}}ssd python-review` — review Python code
 
-## คำสั่งที่มี (32 commands)
+## คำสั่งที่มี (33 commands)
 
 ### Frontend (React + TypeScript)
 
@@ -88,6 +88,7 @@ allowed-tools:
 | `frontend-doctor` | ตรวจสุขภาพโปรเจค React/TypeScript — dependencies, config, folder structure, ENV pattern |
 | `backend-doctor` | ตรวจสุขภาพโปรเจค ASP.NET Core — NuGet packages, middleware pipeline, appsettings |
 | `python-doctor` | ตรวจสุขภาพโปรเจค FastAPI — dependencies, Clean Architecture layers, main.py wiring |
+| `python-streaming-doctor` | ตรวจ production-readiness ของ SSE/streaming endpoint — proxy buffering, timeout, worker, resource leak, multi-replica |
 | `db-doctor` | ตรวจสุขภาพ Database schema — standard columns, datetime2, naming, SP prefix |
 
 ## วิธีตอบสนองต่อคำสั่ง

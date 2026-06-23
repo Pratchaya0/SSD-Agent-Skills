@@ -123,6 +123,10 @@
     "description": "ตรวจสุขภาพโปรเจค FastAPI Clean Architecture — dependencies, layers, main.py lifespan, DomainError, Alembic",
     "argumentHint": "[project path or .]"
   },
+  "python-streaming-doctor": {
+    "description": "ตรวจ production-readiness ของ SSE/streaming endpoint — Nginx buffering, timeout, worker class, resource leak, reconnect, multi-replica scaling",
+    "argumentHint": "[project path or .]"
+  },
   "db-doctor": {
     "description": "ตรวจสุขภาพ Database schema — standard columns, datetime2, naming conventions, stored procedure prefix",
     "argumentHint": "[.sql file, DDL, or project path]"

@@ -47,6 +47,7 @@ const TECH_KEYWORDS = {
   'frontend-doctor':   'package.json',
   'backend-doctor':    'Program.cs',
   'python-doctor':     'lifespan',
+  'python-streaming-doctor': 'X-Accel-Buffering',
   'db-doctor':         'datetime2',
 };
 

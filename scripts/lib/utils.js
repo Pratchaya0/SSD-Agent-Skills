@@ -224,7 +224,7 @@ const SSD_SUB_COMMANDS = [
   'python-review', 'python-refactor', 'python-starter', 'python-feature', 'python-database',
   'git-commit', 'git-flow',
   'contact-skill-gen', 'bug-auth-redirect', 'bug-version-checker', 'release-it-setup',
-  'frontend-doctor', 'backend-doctor', 'python-doctor', 'db-doctor',
+  'frontend-doctor', 'backend-doctor', 'python-doctor', 'python-streaming-doctor', 'db-doctor',
 ];
 
 /**

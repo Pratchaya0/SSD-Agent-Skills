@@ -194,7 +194,13 @@ async def stream_chat(
 ) -> StreamingResponse:
     messages = [ChatMessage(role=m.role, content=m.content) for m in body.messages]
     chunks = service.stream_reply(messages=messages)
-    return StreamingResponse(_to_sse(chunks), media_type="text/event-stream")
+    return StreamingResponse(
+        _to_sse(chunks),
+        media_type="text/event-stream",
+        # ห้ามลืม 2 header นี้ — reverse proxy (Nginx/Cloudflare/ALB) จะ buffer response
+        # ไว้ก่อนแล้วค่อยส่งทีเดียวถ้าไม่มี ทำให้ token ไม่ stream จริงตอนขึ้น production
+        headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"},
+    )
 ```
 
 > **ข้อควรระวัง:** หลัง `StreamingResponse` ส่ง header ไปแล้ว (ตั้งแต่ chunk แรก) จะเปลี่ยน HTTP status ไม่ได้อีก — error ที่เกิดกลางทาง (เช่น LLM API ล้ม) ต้อง catch แล้วส่งเป็น event ภายใน stream (ตัวอย่างข้างบน) ห้าม raise `HTTPException`/`DomainError` ออกมาหลังจาก yield chunk แรกไปแล้ว
