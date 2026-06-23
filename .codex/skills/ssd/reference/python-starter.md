@@ -22,16 +22,51 @@ SSD Python ใช้ `SSD-Python-Starter-Template` เป็น base ทุก p
 
 ### 1.1 Clone template
 
+**ก่อน clone เสมอ — ตรวจสอบว่า directory ปัจจุบันเป็น git repo ที่มีอยู่แล้วหรือไม่:**
+
+```bash
+git rev-parse --is-inside-work-tree 2>&1   # error = directory ใหม่ → กรณี A
+git log --oneline -1 2>&1                  # มี output = มี commit อยู่แล้ว → กรณี C, ไม่มี output = กรณี B
+```
+
+#### กรณี A — Directory ใหม่ (ยังไม่มี .git)
+
 ```bash
 gh repo clone SiamsmileDev/SSD-Python-Starter-Template {project-name}
 cd {project-name}
 
-# ถ้าต้องการเป็น repo ใหม่แยกต่างหาก
+# ถ้าต้องการเป็น repo ใหม่แยกต่างหาก (ไม่เก็บ git history ของ template)
 rm -rf .git
 git init
 git add .
 git commit -m "chore: initial project from SSD-Python-Starter-Template"
 ```
+
+#### กรณี B — อยู่ใน repo ที่มีอยู่แล้วแต่ยังไม่มี commit (เช่น repo เปล่าที่สร้างไว้รอ)
+
+`gh repo clone` จะ error เพราะ directory ปัจจุบันมีอยู่แล้ว — ห้ามรันตรงๆ และห้ามแตะ `.git` ของ directory ปัจจุบัน:
+
+```bash
+# 1. clone template ไปไว้ที่ temp directory แยก (ไม่ clone ทับ directory ปัจจุบัน)
+gh repo clone SiamsmileDev/SSD-Python-Starter-Template /tmp/{project-name}-template
+
+# 2. ลบ .git ของ template ออกจาก temp directory ก่อนเสมอ — ป้องกันการไปทับ .git เดิม
+rm -rf /tmp/{project-name}-template/.git
+
+# 3. copy เนื้อหา (ไม่มี .git ติดมาแล้ว) เข้า directory ปัจจุบัน
+cp -r /tmp/{project-name}-template/. .
+rm -rf /tmp/{project-name}-template
+
+# 4. commit เข้า history เดิม (เก็บ branch ปัจจุบันไว้ครบ ไม่มีการ git init ใหม่)
+git add .
+git commit -m "chore: initial project from SSD-Python-Starter-Template"
+```
+
+#### กรณี C — repo ปัจจุบันมี commit/history อยู่แล้ว
+
+**ห้ามรันคำสั่งใดๆ ที่แตะ `.git` หรือ copy ไฟล์ทับโดยไม่ถาม user ก่อนเสมอ** — ใช้ AskUserQuestion ถามว่าต้องการ:
+- Clone template เป็น repo ใหม่แยกต่างหาก ที่ path อื่น (ไม่แตะ repo ปัจจุบันเลย) — ตัวเลือกที่ปลอดภัยที่สุด
+- Merge ไฟล์จาก template เข้า repo ปัจจุบัน โดยใช้ขั้นตอนแบบกรณี B แต่ต้องตรวจ conflict ไฟล์ที่มีอยู่แล้วทีละไฟล์ก่อน copy ทับ
 
 ### 1.2 ตั้งค่า .env
 
