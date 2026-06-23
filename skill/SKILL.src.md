@@ -21,7 +21,7 @@ allowed-tools:
 - `{{command_prefix}}ssd git-commit` — เขียน commit message ตามมาตรฐาน
 - `{{command_prefix}}ssd python-review` — review Python code
 
-## คำสั่งที่มี (31 commands)
+## คำสั่งที่มี (32 commands)
 
 ### Frontend (React + TypeScript)
 
@@ -50,6 +50,7 @@ allowed-tools:
 | Command | รายละเอียด |
 |---------|-----------|
 | `python-starter` | เริ่มโปรเจค FastAPI ใหม่ด้วย Clean Architecture |
+| `python-feature` | สร้าง feature/endpoint ใหม่จาก natural language — CRUD และ streaming + external service |
 | `python-review` | Review Python code (architecture, HTTP methods, logging, SQLAlchemy) |
 | `python-refactor` | Refactor .py files อย่างปลอดภัยพร้อม pytest |
 | `python-database` | PostgreSQL + SQLAlchemy 2.x: naming, ORM models, Alembic migration |

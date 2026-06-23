@@ -221,7 +221,7 @@ const SSD_SUB_COMMANDS = [
   'backend-setup', 'dotnet-controller', 'dotnet-service', 'dotnet-infra', 'database',
   'ts-fix-unused',
   'frontend-review', 'backend-review', 'frontend-refactor', 'backend-refactor',
-  'python-review', 'python-refactor', 'python-starter', 'python-database',
+  'python-review', 'python-refactor', 'python-starter', 'python-feature', 'python-database',
   'git-commit', 'git-flow',
   'contact-skill-gen', 'bug-auth-redirect', 'bug-version-checker', 'release-it-setup',
   'frontend-doctor', 'backend-doctor', 'python-doctor', 'db-doctor',

@@ -38,6 +38,7 @@ const TECH_KEYWORDS = {
   'dotnet-infra':      'Serilog',
   'database':          'EF Core',
   'python-starter':    'FastAPI',
+  'python-feature':    'StreamingResponse',
   'python-review':     'SQLAlchemy',
   'python-database':   'SQLAlchemy',
   'git-commit':        'Conventional Commits',

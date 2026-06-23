@@ -79,6 +79,10 @@
     "description": "เริ่มโปรเจค FastAPI ใหม่ด้วย Clean/Hexagonal Architecture — structure, dependencies, patterns",
     "argumentHint": "[project name]"
   },
+  "python-feature": {
+    "description": "สร้าง feature/endpoint ใหม่จาก natural language description — Clean Architecture, รองรับ CRUD และ streaming + external service",
+    "argumentHint": "[feature description]"
+  },
   "git-commit": {
     "description": "Conventional Commits, Semantic Versioning, breaking changes — เขียน commit message ตามมาตรฐาน SSD",
     "argumentHint": "[scope]"
