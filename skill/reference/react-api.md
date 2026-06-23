@@ -7,8 +7,8 @@ SSD ใช้ Axios สำหรับ HTTP request และ TanStack React Que
 
 ## กฎหลัก
 
-1. ไฟล์ API client ทุกไฟล์ต้องเก็บใน `src/app/api/`
-2. ควรใช้ NSwag สร้าง Axios API client เป็นลำดับแรก
+1. ไฟล์ NSwag generated (`.client.ts`) เก็บที่ root ของ `src/app/api/` — ไฟล์ wrapper (`.api.ts`) และ React Query hooks (`.query.ts`) เก็บใน `src/app/api/query/`
+2. **ต้องรัน `npm run codegen` ด้วยตัวเอง (ใช้ Bash) ก่อนเขียน client เสมอ** — ห้ามข้ามไปเขียน client function เอง เว้นแต่ codegen ล้มเหลวจริง (ไม่มี swagger endpoint, build ล้มเหลว) และต้องแจ้งผู้ใช้ก่อนว่าทำไมถึง fallback
 3. ไฟล์ React Query hooks ตั้งชื่อตาม Controller และลงท้ายด้วย `.query.ts`
 4. ต้องประกาศ `queryKeys` เป็น object สำหรับทุก query ไฟล์
 5. ต้องจัดการ error response จาก API เสมอ (`isSuccess` check)
@@ -18,34 +18,57 @@ SSD ใช้ Axios สำหรับ HTTP request และ TanStack React Que
 
 ```
 src/app/api/
-├── orderApi.client.ts   # สร้างจาก NSwag (ชื่อลงท้าย .client.ts)
-├── orderApi.ts          # เขียนเองกรณี NSwag ไม่พอ
-├── order.query.ts       # React Query hooks
+├── orderApi.client.ts       # NSwag generated (root) — ห้ามแก้ไขตรงๆ, regenerate ทุกครั้งที่รัน codegen
 │
-└── sale/               # กรณีต่อหลาย API ให้สร้าง folder
-    ├── saleApi.client.ts
-    └── slip.query.ts
+└── query/
+    ├── orderApi.api.ts      # wrapper — instantiate client class จาก ../orderApi.client.ts
+    └── order.query.ts       # React Query hooks — import orderClient จาก ./orderApi.api.ts
 ```
 
-## วิธีที่ 1: ใช้ NSwag สร้าง API Client (แนะนำ)
+## วิธีที่ 1: ใช้ NSwag สร้าง API Client (แนะนำ — บังคับลองก่อนเสมอ)
 
-### ขั้นตอนที่ 1: ตั้งค่า API_URL ใน .env
+### ขั้นตอนที่ 1: ตั้งค่า VITE_API_URL ใน .env
 ```
-API_URL=https://localhost:5001
-# NSwag จะดึง swagger จาก https://localhost:5001/swagger/v1/swagger.json
+VITE_API_URL="http://localhost:5000/api"
+# ต้องมี /api suffix เสมอ (มาตรฐานบริษัท — ดู Const.ts: export const API_URL = VITE_API_URL)
+# npm run codegen จะตัด /api ออกเองตอนดึง swagger spec (ดึงจาก http://localhost:5000/swagger/v1/swagger.json) — ห้ามตัดเองใน .env
+# รองรับหลาย backend ได้โดยใส่หลาย URL คั่นด้วย comma เช่น VITE_API_URL="https://a.com/api,https://b.com/api"
 ```
 
-### ขั้นตอนที่ 2: รัน code generation
+### ขั้นตอนที่ 2: รัน code generation ด้วยตัวเอง
 ```bash
-npm run code-gen
+npm run codegen
+```
+ต้องรันเองด้วย Bash จริงๆ — ห้ามสมมติว่ารันแล้วหรือเขียน client เองโดยไม่ลองรันก่อน คำสั่งนี้ทำ post-processing ให้อัตโนมัติแล้ว (ตัด `/api/` ออกจาก path ที่ generate, ปรับ date format เป็น dayjs, เพิ่ม custom formatter import) — ไม่ต้องทำเพิ่มเอง
+
+### ขั้นตอนที่ 3: ตรวจไฟล์ที่ถูกสร้าง/เปลี่ยนแปลงจริง
+```bash
+git status src/app/api/
+```
+ไฟล์ดิบที่ได้ตั้งชื่อตาม **hostname** ของ `VITE_API_URL` เสมอ (เช่น `VITE_API_URL="http://localhost:5000/api"` → ได้ไฟล์ `localhost.api.ts`) ไม่เกี่ยวกับชื่อ controller หรือ project — ถ้าตั้งหลาย URL คั่น comma จะได้ไฟล์แยกตาม hostname ของแต่ละ URL คนละไฟล์
+
+### ขั้นตอนที่ 4: เปลี่ยนชื่อไฟล์ตาม Standard
+ไฟล์ดิบ (เช่น `localhost.api.ts`) ตั้งชื่อตาม hostname ไม่มีความหมาย — เปลี่ยนชื่อตาม **class ที่ generate ออกมาในไฟล์** (เช่นเจอ `export class OrderClient` → เปลี่ยนชื่อไฟล์เป็น `orderApi.client.ts`) เก็บไว้ที่ root ของ `src/app/api/` (**ไม่ใช่** `src/api/`)
+
+### ขั้นตอนที่ 5: สร้าง wrapper instantiate client
+NSwag สร้างไฟล์เป็น **class** (เช่น `OrderClient`) ต้องสร้างไฟล์ wrapper ใน `src/app/api/query/<name>.api.ts` เพื่อ import class แล้ว instantiate ด้วย `API_URL` + `axios` — ไม่มีไฟล์นี้แล้วเขียน `.query.ts` เรียก `orderClient.method()` ตรงๆ จะ undefined:
+```typescript
+// src/app/api/query/orderApi.api.ts
+import axios from "axios";
+import { API_URL } from "../../../Const"; // API_URL = VITE_API_URL ซึ่งมี /api อยู่แล้ว — ห้ามต่อ/ตัด /api เพิ่ม
+import { OrderClient } from "../orderApi.client";
+
+export const orderClient = new OrderClient(API_URL, axios);
 ```
 
-### ขั้นตอนที่ 3: เปลี่ยนชื่อไฟล์
-โปรแกรมจะสร้างไฟล์ `api.ts` ใน `src/api/` ให้เปลี่ยนชื่อตาม Standard เช่น `orderApi.client.ts`
+### ขั้นตอนที่ 6: เขียน React Query hooks
+สร้าง `.query.ts` ใน `src/app/api/query/` ที่ import `orderClient` จาก wrapper ในขั้นตอนที่ 5 (ดูตัวอย่างเต็มในหัวข้อ "การเขียน React Query Hooks" ด้านล่าง)
 
-## วิธีที่ 2: เขียน Axios API Client เอง
+## วิธีที่ 2: เขียน Axios API Client เอง (ทางเลือกสุดท้ายเท่านั้น)
 
-ใช้เมื่อ NSwag ไม่สามารถตอบสนองได้:
+ใช้เฉพาะเมื่อรัน `npm run codegen` ไม่ได้จริงๆ — ไม่มี swagger endpoint ให้ดึง, backend ยังไม่มี controller, หรือ build ล้มเหลว **ต้องแจ้งผู้ใช้ก่อนว่าทำไมถึง fallback มาใช้วิธีนี้** ห้ามใช้วิธีนี้เป็นทางลัดแทนการลองรัน codegen ก่อน
+
+ไฟล์กลุ่มนี้ไม่มี class ให้ instantiate — `.query.ts` ที่เรียกใช้ต้อง import free function ตรงๆ (เช่น `getOrderGetAll(...)`) แทน `orderClient.method()`:
 
 ```typescript
 import axios, { AxiosResponse } from "axios";

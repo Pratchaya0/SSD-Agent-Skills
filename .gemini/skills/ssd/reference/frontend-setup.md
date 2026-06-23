@@ -68,9 +68,10 @@ Frontend ของ SSD ใช้ React + TypeScript (TSX) เป็นหลั�
 src/app/
 ├── layout/          # Template layout (ไม่ควรแก้ไข)
 ├── api/             # API client files
-│   ├── orderApi.client.ts   # สร้างจาก NSwag
-│   ├── orderApi.ts          # เขียนเอง
-│   └── order.query.ts       # React Query hooks
+│   ├── orderApi.client.ts   # NSwag generated (root)
+│   └── query/
+│       ├── orderApi.api.ts  # wrapper — instantiate client
+│       └── order.query.ts   # React Query hooks
 ├── modules/         # UI screens และ components
 │   ├── _common/    # Shared components (Template, ไม่ควรแก้)
 │   ├── _auth/      # Auth components (Template, ไม่ควรแก้)
