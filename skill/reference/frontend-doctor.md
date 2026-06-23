@@ -51,11 +51,19 @@
 
 | Path | ต้องมี |
 |------|-------|
-| `src/modules/` | โฟลเดอร์ feature modules |
+| `src/app/modules/` | โฟลเดอร์ feature modules |
 | `src/components/` | shared components |
 | `src/redux/` หรือ `src/store/` | Redux setup |
 | `src/utils/` | utility functions |
 | `src/services/` หรือ `src/api/` | API clients / NSwag generated |
+
+สำหรับแต่ละ module folder ที่เจอใน `src/app/modules/` (ไม่รวม `_auth`, `_common`) ตรวจเพิ่ม:
+
+| Check | ต้องมี |
+|-------|-------|
+| ชื่อ module folder | PascalCase (เช่น `Order/` ไม่ใช่ `order/`) |
+| `[Module]/components/` subfolder | มีอยู่จริง (ไม่ใช่ไฟล์ component ลอยที่ root ของ module) |
+| `[Module]/pages/` subfolder | มีอยู่จริง พร้อม `IndexPage.tsx` |
 
 ### Area 4: window.__CONST__ENV__ Pattern
 
@@ -110,8 +118,12 @@ window.__CONST__ENV__ = {
 ### Area 3: Folder Structure
 | Path | Status |
 |------|--------|
-| src/modules/ | ✅ |
+| src/app/modules/ | ✅ |
 | src/redux/ | ⚠️ พบ src/store/ แทน |
+| Order/ — PascalCase | ✅ |
+| Order/components/, Order/pages/ | ✅ |
+| productCategory/ — PascalCase | ❌ ควรเป็น ProductCategory/ |
+| productCategory/components/, pages/ | ❌ ไม่พบ subfolder — ไฟล์ลอยที่ root ของ module |
 
 ### Area 4: ENV Pattern
 | Check | Status |

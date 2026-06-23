@@ -32,6 +32,8 @@
 |-----|-------------|--------------|
 | Component | PascalCase, max 3 คำ | `orderPageComponent` |
 | Props type | `[ComponentName]Props` | `Props`, `IProps`, `OrderProps` (ถ้า component ไม่ชื่อ Order) |
+| Module folder name | PascalCase เช่น `Order/` | camelCase เช่น `order/`, `productCategory/` |
+| Component/Page อยู่ใน subfolder | `[Module]/components/*.tsx`, `[Module]/pages/*.tsx` | ไฟล์ลอยอยู่ที่ root ของ module เช่น `[Module]/OrderForm.tsx` |
 | Page component | ลงท้ายด้วย `Page` | `OrderList`, `OrderScreen` |
 | Route path | lowercase kebab-case | `/orderList`, `/Order_List` |
 | Variable/function | camelCase | `OrderName`, `order_name` |
@@ -75,6 +77,7 @@
 |----|-----|-----|
 | Redux ต้องใช้ `createSlice` | `createSlice({ name, initialState, reducers })` | `createReducer`, manual switch |
 | ใช้ typed hooks | `useAppSelector`, `useAppDispatch` จาก `redux/hook.ts` | `useSelector`, `useDispatch` โดยตรง |
+| List/table pagination หรือ search/filter ต้องอยู่ใน Redux slice | `dispatch(setXxxPagination(...))`, อ่านค่าผ่าน `useAppSelector` | `useState` สำหรับ pagination/search ของ list/table page |
 
 ### Category 8: API Calls
 
@@ -120,14 +123,14 @@
 
 | File | Line | Category | ปัญหา | แนวทางแก้ไข |
 |------|------|----------|-------|-------------|
-| src/modules/Order/OrderForm.tsx | 12 | Types | ใช้ `any` | เปลี่ยนเป็น `unknown` หรือระบุ type ชัดเจน |
-| src/modules/Order/OrderList.tsx | 45 | Lists | ใช้ index เป็น key | ใช้ `order.orderId` แทน |
+| src/app/modules/Order/components/OrderForm.tsx | 12 | Types | ใช้ `any` | เปลี่ยนเป็น `unknown` หรือระบุ type ชัดเจน |
+| src/app/modules/Order/components/OrderList.tsx | 45 | Lists | ใช้ index เป็น key | ใช้ `order.orderId` แทน |
 
 ### ⚠️ Warnings (ควรแก้ไข)
 
 | File | Line | Category | ข้อสังเกต |
 |------|------|----------|----------|
-| src/modules/Order/OrderCard.tsx | 8 | Testing | ไม่มี `name` attribute บน Button |
+| src/app/modules/Order/components/OrderCard.tsx | 8 | Testing | ไม่มี `name` attribute บน Button |
 
 ### ✅ ผ่าน
 

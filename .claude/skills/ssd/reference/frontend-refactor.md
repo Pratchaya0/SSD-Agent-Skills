@@ -68,7 +68,7 @@ git checkout -- <file-path>
 ### ✅ แก้ไขสำเร็จ
 | File | Violations ที่แก้ |
 |------|-----------------|
-| src/modules/Order/OrderForm.tsx | `any` → `unknown` (line 12), Fragment syntax (line 8) |
+| src/app/modules/Order/components/OrderForm.tsx | `any` → `unknown` (line 12), Fragment syntax (line 8) |
 
 ### ⏭️ Skip (Tier 4 — ต้องการ user decision)
 | File | Line | ปัญหา | เหตุผลที่ skip |
@@ -78,7 +78,7 @@ git checkout -- <file-path>
 ### ❌ Skip (compile error หลัง edit)
 | File | ปัญหา |
 |------|-------|
-| src/modules/Order/OrderCard.tsx | เปลี่ยน Props type name แล้ว compile error — revert แล้ว |
+| src/app/modules/Order/components/OrderCard.tsx | เปลี่ยน Props type name แล้ว compile error — revert แล้ว |
 
 ### สรุป
 - แก้ไขสำเร็จ: X violations ใน Y ไฟล์

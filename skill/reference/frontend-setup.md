@@ -84,7 +84,8 @@ src/app/
 │       │   ├── IndexPage.tsx    # หน้าแรกของ module ต้องชื่อนี้
 │       │   ├── OrderPage.tsx    # ทุก page ต้องลงท้ายด้วย Page
 │       │   └── index.ts
-│       └── orderSlice.ts
+│       ├── orderSlice.ts
+│       └── orderSchema.ts      # (ไม่บังคับ) Zod validation สำหรับ search/filter params
 ├── routes/
 │   ├── Routes.tsx        # Route configuration
 │   └── ASideMenuList.tsx # Sidebar menu

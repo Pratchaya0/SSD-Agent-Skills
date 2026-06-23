@@ -14,6 +14,9 @@
 5. ต้องใช้ arrow function สำหรับ event handler
 6. ต้องใช้ shorthand fragment `<>...</>` แทน `<React.Fragment>`
 7. ต้องใช้ `ref callback` ไม่ใช้ string ref
+8. ไฟล์ component ภายใน module ต้องอยู่ใน `<Module>/components/` subfolder เสมอ — ห้ามวางไฟล์ลอยที่ root ของ module
+9. ไฟล์ page ภายใน module ต้องอยู่ใน `<Module>/pages/` subfolder เสมอ และทุก module ต้องมี `pages/IndexPage.tsx`
+10. ทั้ง `components/` และ `pages/` ต้องมี `index.ts` barrel เป็น named re-export พร้อม prefix ชื่อ module เช่น `export { default as OrderTable } from "./Table"`
 
 ## ขั้นตอนการสร้าง Component
 
@@ -188,6 +191,33 @@ import Footer from "./Footer";
 - ไม่เกิน 3 คำ
 - หน้าแรกของ module ต้องชื่อ `IndexPage`
 - ทุก module ต้องมี `IndexPage`
+
+## โครงสร้างไฟล์ภายใน Module + Barrel Export
+
+ไฟล์ component และ page ต้องแยกอยู่ใน subfolder ของตัวเอง พร้อม `index.ts` barrel — ห้ามวางไฟล์ลอยที่ root ของ module:
+
+```
+src/app/modules/Order/
+├── components/
+│   ├── Table.tsx
+│   ├── Form.tsx
+│   └── index.ts
+├── pages/
+│   ├── IndexPage.tsx
+│   ├── DetailPage.tsx
+│   └── index.ts
+└── orderSlice.ts
+```
+
+```typescript
+// components/index.ts — named re-export พร้อม prefix ชื่อ module
+export { default as OrderTable } from "./Table";
+export { default as OrderForm } from "./Form";
+
+// pages/index.ts
+export { default as OrderPage } from "./IndexPage";
+export { default as OrderDetailPage } from "./DetailPage";
+```
 
 ## การตรวจสอบสิทธิ์ใน Component
 
