@@ -14,7 +14,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 - `/ssd git-commit` — เขียน commit message ตามมาตรฐาน
 - `/ssd python-review` — review Python code
 
-## คำสั่งที่มี (33 commands)
+## คำสั่งที่มี (35 commands)
 
 ### Frontend (React + TypeScript)
 
@@ -23,6 +23,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 | `frontend-init` | เริ่มโปรเจค Frontend ใหม่จาก react-ts-template-2023 v1.2.0 |
 | `backend-init` | เริ่มโปรเจค Backend ใหม่จาก Net60_ApiTemplate_2023 (202306) |
 | `frontend-setup` | ตั้งค่าโปรเจค React/TS ใหม่ — folder structure, tools, naming conventions |
+| `frontend-feature` | สร้าง feature ใหม่จาก natural language — components, pages, Redux slice, API client ครบ |
 | `react-component` | มาตรฐาน React functional component, Props typing, hooks |
 | `react-form` | Formik form implementation กับ MUI |
 | `react-state` | Redux slice, dispatch patterns |
@@ -33,6 +34,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 | Command | รายละเอียด |
 |---------|-----------|
 | `backend-setup` | ตั้งค่าโปรเจค ASP.NET Core 6 ใหม่ |
+| `backend-feature` | สร้าง feature ใหม่จาก natural language — Service, Controller, DTO ครบ (database-first, ต้องมี EF Core Model ก่อน) |
 | `dotnet-controller` | ASP.NET API controllers, routing, authorization |
 | `dotnet-service` | Service layer, DTO, AutoMapper |
 | `dotnet-infra` | Serilog logging, Quartz jobs, RestSharp HTTP clients |
@@ -95,7 +97,8 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
    - พิมพ์ `doctor` → ตรงกับ segment ท้ายของ `frontend-doctor`, `backend-doctor`, `python-doctor`, `db-doctor`
    - พิมพ์ `review` → ตรงกับ segment ท้ายของ `frontend-review`, `backend-review`, `python-review`
    - **เจอ 1 คำสั่ง** — แนะนำคำสั่งนั้นทันที พร้อมคำอธิบายสั้นๆ และบรรทัด "ลองพิมพ์: `/ssd <command>`"
-   - **เจอมากกว่า 1 คำสั่ง** — แสดงเฉพาะคำสั่งที่ตรง (ไม่ใช่ทั้ง 31 คำสั่ง) พร้อมคำอธิบาย แล้วใช้ AskUserQuestion ถามผู้ใช้ว่าต้องการคำสั่งใดจากรายการที่ตรงนั้น
+   - **เจอมากกว่า 1 คำสั่ง แต่ไม่เกิน 4 คำสั่ง** — แสดงเฉพาะคำสั่งที่ตรง (ไม่ใช่ทั้งหมด) พร้อมคำอธิบาย แล้วใช้ AskUserQuestion ถามผู้ใช้ว่าต้องการคำสั่งใดจากรายการที่ตรงนั้น (ใส่ทุกคำสั่งที่ตรงเป็น option — AskUserQuestion รับ option ได้สูงสุด 4 ตัวเท่านั้น)
+   - **เจอมากกว่า 4 คำสั่ง** — **ห้ามใช้ AskUserQuestion** (option เกิน 4 จะถูกตัดออกบางส่วนโดยไม่มีกฎว่าตัดตัวไหน ทำให้บางคำสั่งเลือกไม่ได้) แสดงรายการคำสั่งที่ตรงทั้งหมดเป็นข้อความ แล้วถามให้ผู้ใช้พิมพ์ชื่อคำสั่งที่ต้องการจากรายการนั้นแทน
    - **ไม่เจอเลย** — fallback กลับไปแสดงรายการคำสั่งทั้งหมดและถามว่าต้องการใช้คำสั่งใด (เหมือนข้อ 2)
 
 ## บริบทร่วม (Shared Standards)

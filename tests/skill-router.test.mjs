@@ -12,8 +12,8 @@ const METADATA = path.join(ROOT, 'skill', 'scripts', 'command-metadata.json');
 
 const EXPECTED_COMMANDS = [
   'frontend-init', 'backend-init', 'ts-fix-unused',
-  'frontend-setup', 'react-component', 'react-form', 'react-state', 'react-api',
-  'backend-setup', 'dotnet-controller', 'dotnet-service', 'dotnet-infra', 'database',
+  'frontend-setup', 'frontend-feature', 'react-component', 'react-form', 'react-state', 'react-api',
+  'backend-setup', 'backend-feature', 'dotnet-controller', 'dotnet-service', 'dotnet-infra', 'database',
   'frontend-review', 'backend-review', 'frontend-refactor', 'backend-refactor',
   'python-review', 'python-refactor', 'python-starter', 'python-feature',
   'git-commit', 'git-flow',
@@ -32,7 +32,7 @@ describe('Skill router — SKILL.src.md', () => {
     assert.ok(content.includes('user-invocable: true'), 'Missing user-invocable: true');
   });
 
-  test('SKILL.src.md mentions all 33 commands', () => {
+  test('SKILL.src.md mentions all 35 commands', () => {
     const content = fs.readFileSync(SKILL_SRC, 'utf-8');
     for (const cmd of EXPECTED_COMMANDS) {
       assert.ok(
@@ -42,7 +42,7 @@ describe('Skill router — SKILL.src.md', () => {
     }
   });
 
-  test('all 33 reference files exist in skill/reference/', () => {
+  test('all 35 reference files exist in skill/reference/', () => {
     for (const cmd of EXPECTED_COMMANDS) {
       const refPath = path.join(REF_DIR, `${cmd}.md`);
       assert.ok(
@@ -65,7 +65,7 @@ describe('Skill router — SKILL.src.md', () => {
     }
   });
 
-  test('command-metadata.json has all 33 entries', () => {
+  test('command-metadata.json has all 35 entries', () => {
     assert.ok(fs.existsSync(METADATA), 'skill/scripts/command-metadata.json not found');
     const meta = JSON.parse(fs.readFileSync(METADATA, 'utf-8'));
     for (const cmd of EXPECTED_COMMANDS) {

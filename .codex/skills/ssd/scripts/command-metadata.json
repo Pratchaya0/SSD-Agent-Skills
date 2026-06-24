@@ -11,6 +11,10 @@
     "description": "ตั้งค่าโปรเจค React/TypeScript ใหม่ — folder structure, package มาตรฐาน, naming conventions, environment variables",
     "argumentHint": "[feature]"
   },
+  "frontend-feature": {
+    "description": "สร้าง feature ใหม่จาก natural language description — components, pages, Redux slice, API client ครบ module เดียว",
+    "argumentHint": "[feature description]"
+  },
   "react-component": {
     "description": "มาตรฐาน React functional component — Props typing, hooks, file naming, suffixes",
     "argumentHint": "[component name]"
@@ -30,6 +34,10 @@
   "backend-setup": {
     "description": "ตั้งค่าโปรเจค ASP.NET Core 6 ใหม่ — folder structure, dependencies, middleware",
     "argumentHint": "[project name]"
+  },
+  "backend-feature": {
+    "description": "สร้าง feature ใหม่จาก natural language description — Service, Controller, DTO ครบ (database-first, ต้องมี EF Core Model ก่อน)",
+    "argumentHint": "[feature description]"
   },
   "dotnet-controller": {
     "description": "ASP.NET API controller patterns — routing, authorization, response format",
