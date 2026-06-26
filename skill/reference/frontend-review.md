@@ -81,10 +81,13 @@
 
 ### Category 8: API Calls
 
+> ไฟล์ NSwag generated (`.client.ts`) ได้รับการยกเว้นจากการตรวจ **เนื้อหา** ภายในไฟล์เท่านั้น (เพราะ regenerate ทับทุกครั้งที่รัน `npm run codegen`) — **ชื่อไฟล์และตำแหน่งไฟล์ยังต้องตรวจเสมอ** ห้ามถือว่า "เป็นไฟล์ generated" แล้วข้ามการตรวจทั้งไฟล์ไปเลย
+
 | กฎ | ถูก | ผิด |
 |----|-----|-----|
 | ห้าม axios ใน component โดยตรง | `useQuery`, `useMutation` จาก React Query | `axios.get()` ใน useEffect หรือ component body |
 | Query key ต้องใช้ `queryKeys` object | `queryKeys.orders.list()` | `['orders', 'list']` แบบ inline |
+| ไฟล์ NSwag generated ที่ root ของ `src/app/api/` ต้องเปลี่ยนชื่อตาม class ที่ generate ออกมา (`react-api.md` ขั้นตอนที่ 4) — **ห้ามเหลือชื่อ hostname เดิม** | `orderApi.client.ts`, `chatApi.client.ts` | `localhost.api.ts`, `staging.api.ts` (ยังเป็นชื่อ hostname ของ `VITE_API_URL` ไม่ได้เปลี่ยน) → ❌ Violation |
 
 ### Category 9: Automation Testing Attributes
 
@@ -110,7 +113,7 @@
 
 ### ขั้นตอนที่ 2: อ่านไฟล์และตรวจตาม Checklist
 
-อ่านทีละไฟล์ ตรวจทุก category ด้านบน บันทึก violations พร้อม line number
+อ่านทีละไฟล์ ตรวจทุก category ด้านบน บันทึก violations พร้อม line number — ถ้า scope แตะ `src/app/api/` ให้ Glob `src/app/api/*.ts` ที่ root (ไม่รวม `query/`) เพื่อเช็ค Category 8 แถวสุดท้ายด้วยเสมอ ไม่ใช่แค่ไฟล์ที่ระบุ scope มาให้
 
 ### ขั้นตอนที่ 3: สร้างรายงาน
 

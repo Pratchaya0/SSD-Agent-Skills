@@ -57,6 +57,8 @@
 | `src/utils/` | utility functions |
 | `src/services/` หรือ `src/api/` | API clients / NSwag generated |
 
+ตรวจ `src/app/api/` ที่ root (ไม่รวม `query/`) เพิ่ม — ไฟล์ NSwag generated ทุกไฟล์ต้องเปลี่ยนชื่อตาม class ที่ generate (`react-api.md` ขั้นตอนที่ 4) ห้ามเหลือชื่อตาม hostname ของ `VITE_API_URL` (เช่น `localhost.api.ts`, `staging.api.ts`) ค้างอยู่ → พบแล้ว = ❌
+
 สำหรับแต่ละ module folder ที่เจอใน `src/app/modules/` (ไม่รวม `_auth`, `_common`) ตรวจเพิ่ม:
 
 | Check | ต้องมี |

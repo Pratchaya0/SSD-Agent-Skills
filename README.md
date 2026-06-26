@@ -2,7 +2,7 @@
 
 คอลเลกชัน Agent Skills สำหรับทีมพัฒนาของ Smile Solution Development จาก SIAM SMILE WEB SPECIFICATION v2.0.1
 
-1 skill, 23 commands — React/TypeScript, .NET Core, Python, Git
+1 skill, 35 commands — React/TypeScript, .NET Core, Python, Git
 
 ## ติดตั้ง
 
@@ -43,7 +43,7 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 
 หรือพิมพ์ `/ssd` เพื่อดูรายการ commands ทั้งหมด
 
-## Commands ที่มี (23 commands)
+## Commands ที่มี (35 commands)
 
 ### เริ่มต้นโปรเจคใหม่
 
@@ -57,6 +57,7 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 | Command | ใช้เมื่อ |
 |---------|----------|
 | `/ssd frontend-setup` | ตั้งค่าโปรเจค Frontend ใหม่, โครงสร้าง folder, เครื่องมือ, naming conventions |
+| `/ssd frontend-feature` | สร้าง feature ใหม่ครบ module — components, pages, Redux slice, API client |
 | `/ssd react-component` | เขียน React component, ตั้งชื่อ component/props/page |
 | `/ssd react-form` | ใช้งาน Formik สำหรับ form, validation |
 | `/ssd react-state` | ใช้งาน Redux, สร้าง slice, dispatch action |
@@ -67,6 +68,7 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 | Command | ใช้เมื่อ |
 |---------|----------|
 | `/ssd backend-setup` | ตั้งค่าโปรเจค .NET ใหม่, โครงสร้าง folder, naming conventions |
+| `/ssd backend-feature` | สร้าง feature ใหม่ครบ module — Service, Controller, DTO (database-first, ต้องมี EF Core Model ก่อน) |
 | `/ssd dotnet-controller` | เขียน ASP.NET API Controller |
 | `/ssd dotnet-service` | เขียน Service, DTO, AutoMapper |
 | `/ssd dotnet-infra` | Logging (Serilog), Background jobs (Quartz), API client (RestSharp) |
@@ -77,6 +79,7 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 | Command | ใช้เมื่อ |
 |---------|----------|
 | `/ssd python-starter` | เริ่มต้น Python project ใหม่จาก SSD-Python-Starter-Template |
+| `/ssd python-feature` | สร้าง feature/endpoint ใหม่ครบ — CRUD, streaming, external service |
 | `/ssd python-review` | ตรวจสอบ code Python — Architecture, HTTP methods, logging, DB, error handling |
 | `/ssd python-refactor` | แก้ไข .py ให้ตรง standard อย่างปลอดภัย + pytest verify |
 | `/ssd python-database` | PostgreSQL + SQLAlchemy 2.x: naming, ORM models, async session, Alembic migration |
@@ -95,6 +98,16 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 | `/ssd backend-review` | ตรวจสอบ code C#/.NET — รายงาน violations พร้อม file:line |
 | `/ssd frontend-refactor` | แก้ไข .tsx/.ts อย่างปลอดภัย ทีละไฟล์ + TypeScript compile check |
 | `/ssd backend-refactor` | แก้ไข .cs อย่างปลอดภัย ทีละไฟล์ + dotnet build check |
+
+### Doctor (Project Health)
+
+| Command | ใช้เมื่อ |
+|---------|----------|
+| `/ssd frontend-doctor` | ตรวจสุขภาพโปรเจค React/TypeScript — dependencies, config, folder structure, ENV pattern |
+| `/ssd backend-doctor` | ตรวจสุขภาพโปรเจค ASP.NET Core — NuGet packages, middleware pipeline, appsettings |
+| `/ssd python-doctor` | ตรวจสุขภาพโปรเจค FastAPI — dependencies, Clean Architecture layers, main.py wiring |
+| `/ssd python-streaming-doctor` | ตรวจ production-readiness ของ SSE/streaming endpoint — proxy buffering, timeout, worker, resource leak |
+| `/ssd db-doctor` | ตรวจสุขภาพ Database schema — standard columns, datetime2, naming, SP prefix |
 
 ### Git & Release
 

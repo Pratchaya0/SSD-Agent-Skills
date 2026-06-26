@@ -47,7 +47,12 @@ src/app/modules/[ModuleName]/
 
 ## ขั้นตอนที่ 2: API Client (ถ้าต้องเรียก backend)
 
-**อ่านไฟล์ `reference/react-api.md` ด้วย Read tool ก่อนเขียนโค้ด** — รัน `npm run codegen` จริงด้วย Bash ก่อนเขียน client เอง (ตามกฎข้อ 2 ของไฟล์นั้น), สร้าง wrapper ใน `src/app/api/query/[moduleName]Api.api.ts` แล้วเขียน React Query hooks ใน `src/app/api/query/[moduleName].query.ts`
+**อ่านไฟล์ `reference/react-api.md` ด้วย Read tool ก่อนเขียนโค้ด** — รัน `npm run codegen` จริงด้วย Bash ก่อนเขียน client เอง (ตามกฎข้อ 2 ของไฟล์นั้น) แล้วทำตามลำดับนี้ครบทุกขั้น **ห้ามข้ามขั้นตอนเปลี่ยนชื่อไฟล์**:
+
+1. รัน `npm run codegen` แล้วเช็ค `git status src/app/api/` ดูไฟล์ที่ถูกสร้าง — ไฟล์ดิบจะตั้งชื่อตาม **hostname** ของ `VITE_API_URL` (เช่น `localhost.api.ts`) ไม่ใช่ชื่อ module
+2. **เปลี่ยนชื่อไฟล์ดิบนั้นทันที** ตาม class ที่ generate ออกมาในไฟล์ (เช่นเจอ `export class ChatClient` → เปลี่ยนชื่อเป็น `chatApi.client.ts`) เก็บไว้ที่ root ของ `src/app/api/` — ห้ามเหลือชื่อ hostname เดิมไว้ในโปรเจค
+3. สร้าง wrapper ที่ `src/app/api/query/[moduleName]Api.api.ts` ที่ **import จากไฟล์ที่เปลี่ยนชื่อแล้วในขั้นที่ 2** (เช่น `import { ChatClient } from "../chatApi.client"`) — ห้าม import จากไฟล์ hostname เดิม
+4. เขียน React Query hooks ใน `src/app/api/query/[moduleName].query.ts` ที่ import wrapper จากขั้นที่ 3
 
 ## ขั้นตอนที่ 3: Redux Slice (ถ้ามี list/pagination/search)
 
