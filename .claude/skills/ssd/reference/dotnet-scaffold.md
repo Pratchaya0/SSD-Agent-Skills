@@ -165,14 +165,18 @@ dotnet build
 
 ## ขั้นตอนที่ 5: ลงทะเบียน DbContext ใน DI (ถ้าเพิ่งสร้างใหม่)
 
-ใน `ProjectSetup.cs` ส่วน `ConfigDependency`:
+**ตรวจสอบก่อนเพิ่ม — Grep `AddDbContext` ในไฟล์เหล่านี้ก่อน:**
+
+- พบใน `Startup.cs` → **ข้ามขั้นตอนนี้ทั้งหมด** (template ลงทะเบียน DbContext ใน `Startup.cs` อยู่แล้ว ห้ามเพิ่มซ้ำ)
+- พบใน `ProjectSetup.cs` แล้ว → **ข้ามขั้นตอนนี้ทั้งหมด** (เคยเพิ่มไว้แล้ว)
+- ไม่พบในไฟล์ใดเลย → เพิ่มใน `ProjectSetup.cs` ส่วน `ConfigDependency`:
 
 ```csharp
 services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 ```
 
-และเพิ่ม connection string ใน `appsettings.json`:
+และตรวจสอบว่ามี connection string ใน `appsettings.json`:
 
 ```json
 {
