@@ -37,10 +37,69 @@
 1. ใช้ Glob tool หา `**/Models/{Entity}.cs` (และ `**/Models/{Entity}*.cs` เผื่อชื่อไม่ตรงเป๊ะ)
 2. ถ้าไม่เจอ ใช้ Grep tool หา `class {Entity}` ทั้งโปรเจค เผื่อ Model อยู่ folder อื่น
 
-**ถ้าไม่เจอ Model เลย — หยุดทันที** บอกผู้ใช้ว่า:
-> ยังไม่มี EF Core Model สำหรับ `{Entity}` ต้องออกแบบตาราง `{Entity}` ก่อนตาม `database.md` (PascalCase, standard columns: `IsActive`/`CreatedByUserId`/`CreatedDate`/`UpdatedByUserId`/`UpdatedDate`, `datetime2` สำหรับวันที่) แล้วทำ EF Core Power Tools → Reverse Engineer ตาม `backend-setup.md` (คลิกขวา Project → EF Core Power Tools → Reverse Engineer → เลือกตารางนี้) ก่อน จากนั้นเรียก `backend-feature` ใหม่อีกครั้ง
+**ถ้าไม่เจอ Model เลย — ถามผู้ใช้ก่อนด้วย AskUserQuestion:**
 
-ห้ามเขียน Model class ขึ้นมาเองแทน แม้จะรู้ schema คร่าวๆจาก feature description ก็ตาม — Reverse Engineer รอบจริงจะ generate ทับหรือขัดกับไฟล์ที่เขียนมือ
+> คำถาม: "ยังไม่มี EF Core Model สำหรับ `{Entity}` — ต้องการให้ช่วยออกแบบตารางและ scaffold ให้เลยไหม?"
+>
+> - "ช่วยออกแบบและ scaffold ให้เลย" → ดำเนินการ **Path A** (ด้านล่าง)
+> - "จัดการเองก่อน" → ดำเนินการ **Path B** (ด้านล่าง)
+
+### Path A: AI-Assisted Design + Scaffold
+
+เมื่อผู้ใช้เลือก "ช่วยออกแบบและ scaffold ให้เลย":
+
+**A1. ถามคอลัมน์ (AskUserQuestion)**
+
+ถามว่าต้องการคอลัมน์อะไรนอกจาก standard columns (`IsActive`, `CreatedByUserId`, `CreatedDate`, `UpdatedByUserId`, `UpdatedDate`) — เช่น ชื่อ, ราคา, FK ไปตารางอื่น
+
+**A2. ออกแบบ DDL ตาม `database.md`**
+
+- อ่าน `reference/database.md` ด้วย Read tool ก่อนเสมอ
+- สร้าง CREATE TABLE SQL: PascalCase, `datetime2` สำหรับวันที่, standard columns ครบทุกตาราง
+- บันทึกเป็น `Migrations/NNN_Create{Entity}.sql` ในโปรเจค
+
+**A3. ตรวจ / ถาม Connection String**
+
+- อ่าน `appsettings.Development.json` → `ConnectionStrings.DefaultConnection`
+- ถ้าค่าเป็น placeholder หรือไม่มี — ถามผู้ใช้ด้วย AskUserQuestion
+
+**A4. รัน DDL ด้วย sqlcmd**
+
+```bash
+sqlcmd -S "<server>" -E -d "<database>" -i "Migrations/NNN_Create{Entity}.sql"
+```
+
+ตรวจสอบว่าตารางถูกสร้างจริง:
+
+```bash
+sqlcmd -S "<server>" -E -d "<database>" -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'"
+```
+
+**A5. รัน EF Core Scaffold (ทำตาม `dotnet-scaffold.md` ขั้นตอน 1–5)**
+
+ตรวจ dotnet-ef tool, NuGet packages (`Microsoft.EntityFrameworkCore.Design`, `.SqlServer`) แล้วรัน:
+
+```bash
+dotnet ef dbcontext scaffold "<ConnectionString>" Microsoft.EntityFrameworkCore.SqlServer \
+  --output-dir Models --context-dir Data --context AppDBContext \
+  --use-database-names --data-annotations --framework net6.0 --no-onconfiguring --force
+```
+
+**A6. ยืนยัน Model ถูกสร้างแล้ว → ไปขั้นตอน 0b**
+
+ตรวจว่า `Models/{Entity}.cs` มีอยู่แล้ว → ดำเนินการต่อที่ขั้นตอน 0b และ 1 ตามปกติ
+
+ห้ามเขียน Model class ด้วยมือเอง แม้ในขั้นตอนนี้ — ต้องใช้ scaffold เท่านั้น เพื่อให้ตรงกับ schema จริงใน database
+
+---
+
+### Path B: ผู้ใช้จัดการเอง
+
+> ยังไม่มี EF Core Model สำหรับ `{Entity}` ต้องออกแบบตาราง `{Entity}` ก่อนตาม `database.md` (PascalCase, standard columns: `IsActive`/`CreatedByUserId`/`CreatedDate`/`UpdatedByUserId`/`UpdatedDate`, `datetime2` สำหรับวันที่) แล้วทำ EF Core Power Tools → Reverse Engineer ตาม `backend-setup.md` (คลิกขวา Project → EF Core Power Tools → Reverse Engineer → เลือกตารางนี้) หรือใช้ `/ssd dotnet-scaffold` เพื่อ reverse-engineer ผ่าน CLI ก่อน จากนั้นเรียก `backend-feature` ใหม่อีกครั้ง
+
+ห้ามเขียน Model class ขึ้นมาเองแทน แม้จะรู้ schema คร่าวๆ จาก feature description ก็ตาม — Reverse Engineer รอบจริงจะ generate ทับหรือขัดกับไฟล์ที่เขียนมือ
+
+---
 
 **ถ้าเจอ Model แล้ว** — ไปขั้นตอนที่ 0b ก่อน แล้วค่อยไปขั้นตอนที่ 1
 
@@ -109,6 +168,18 @@ using ILogger = Serilog.ILogger;
 - Return ผ่าน `ResponseResult` + `ServiceResponse` ทุก method
 - ใช้ `ClaimPermission` attribute ถ้า feature ต้องจำกัดสิทธิ์
 - ถ้า `OAuth.EnableOAuth: true` — อ่าน Scope/Audience จริงจาก `appsettings.json` ตามกฎข้อ 9 ของไฟล์นั้น (fallback `demo_pos` ถ้ายังไม่มีค่าจริง)
+
+> **สำคัญ — Permission.cs pattern:** ทุก `const string` ที่เพิ่มใน `Permission.cs` ต้องมี `public static AuthorizationPolicy {Name}Permission` คู่กันเสมอ โดยใช้ pattern `.RequireClaim({Name}).Build()` — `AuthorizationServices.cs` ของ template ใช้ reflection loop เพื่อลงทะเบียน policy จาก `const string` ทุกตัว และถ้าไม่เจอ policy คู่กัน app จะ crash ที่ startup ด้วย `Sequence contains no elements`
+>
+> ตัวอย่าง:
+> ```csharp
+> public const string ProductAdmin = "product_api:admin";
+>
+> public static AuthorizationPolicy ProductAdminPermission
+>     = new AuthorizationPolicyBuilder()
+>         .RequireClaim(ProductAdmin)
+>         .Build();
+> ```
 
 ## ขั้นตอนที่ 3: External API / Background Job (เฉพาะถ้าต้องใช้)
 
