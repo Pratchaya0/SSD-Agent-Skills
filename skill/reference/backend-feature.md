@@ -42,7 +42,49 @@
 
 ห้ามเขียน Model class ขึ้นมาเองแทน แม้จะรู้ schema คร่าวๆจาก feature description ก็ตาม — Reverse Engineer รอบจริงจะ generate ทับหรือขัดกับไฟล์ที่เขียนมือ
 
-**ถ้าเจอ Model แล้ว** — ไปขั้นตอนที่ 1 ได้ปกติ
+**ถ้าเจอ Model แล้ว** — ไปขั้นตอนที่ 0b ก่อน แล้วค่อยไปขั้นตอนที่ 1
+
+---
+
+## ขั้นตอนที่ 0b: Inspect Project Context (เก็บค่าไว้ใช้ทุก step ถัดไป)
+
+**ทำทันทีหลังจากยืนยันว่า EF Core Model มีอยู่แล้ว — ก่อนเขียนโค้ดบรรทัดแรก**
+
+### 1. อ่าน .csproj — หา RootNamespace และ Serilog
+
+ใช้ Glob `**/*.csproj` แล้ว Read ไฟล์ที่เจอ ดึง:
+
+- `<RootNamespace>` — ถ้าไม่มี tag นี้ ใช้ `<AssemblyName>` ถ้าไม่มีอีก ใช้ชื่อ folder โปรเจค (ชื่อ folder ที่มี `.csproj` อยู่)
+- ตรวจสอบว่ามี `<PackageReference Include="Serilog` (ครอบคลุมทั้ง `Serilog`, `Serilog.AspNetCore`, `Serilog.Extensions.Logging`) ไหม → เก็บเป็น **{UsesSerilog}** = true/false
+
+### 2. หาชื่อ DbContext จริง
+
+ใช้ Glob `**/Data/*.cs` → Read หรือ Grep pattern `class \w+(Db|DB)?Context` ในไฟล์ที่เจอ → เก็บชื่อ class จริงเป็น **{DbContextClass}**
+
+- ถ้าเจอหลายชื่อ ให้เลือก `AppDbContext` หรือ `AppDBContext` ก่อน — ถ้าไม่มีทั้งสองชื่อนั้น ให้ถาม user ด้วย AskUserQuestion
+- ถ้าไม่เจอไฟล์ใน `Data/` เลย ให้ Grep ทั้งโปรเจค pattern `class \w+Context` เพื่อหาใน folder อื่น
+
+### 3. สรุปค่าที่จะใช้
+
+| ตัวแปร | ค่าที่ได้ | ใช้ที่ |
+|--------|---------|-------|
+| `{RootNamespace}` | เช่น `SkillTest`, `MyApi` | namespace declaration ทุกไฟล์ที่ generate |
+| `{DbContextClass}` | เช่น `AppDBContext`, `LogContext` | constructor injection ใน Service |
+| `{UsesSerilog}` | true/false | ตัดสินใจเรื่อง using alias ในขั้นตอนที่ 0c |
+
+---
+
+## ขั้นตอนที่ 0c: ILogger Alias (ถ้า {UsesSerilog} = true)
+
+.NET 6 เปิด `<ImplicitUsings>enable</ImplicitUsings>` โดย default ซึ่ง include `Microsoft.Extensions.Logging` อัตโนมัติ — ถ้า project ใช้ Serilog ด้วยจะเกิด ambiguous reference ระหว่าง `Serilog.ILogger` กับ `Microsoft.Extensions.Logging.ILogger`
+
+**ทุกไฟล์ที่ generate และมีการใช้ `ILogger` ต้องเพิ่ม using alias บรรทัดบนสุดของ using block:**
+
+```csharp
+using ILogger = Serilog.ILogger;
+```
+
+ห้ามใช้แค่ `using Serilog;` เพียงอย่างเดียว — ต้องมี alias เพื่อหลีกเลี่ยง ambiguous reference
 
 ---
 
@@ -50,8 +92,10 @@
 
 **อ่านไฟล์ `reference/dotnet-service.md` ด้วย Read tool ก่อนเขียนโค้ด** ใช้โค้ดตัวอย่างในไฟล์นั้นตรงๆ:
 
+> **ทุกไฟล์ที่ generate ต้องขึ้นต้น namespace declaration ด้วย `{RootNamespace}` จากขั้นตอนที่ 0b เสมอ** เช่น `namespace SkillTest.Services.Order` — ห้ามใช้ชื่อ namespace จากความจำหรือเดา
+
 1. Interface — `Services/{Entity}/I{Entity}Service.cs`
-2. Service Implementation — `Services/{Entity}/{Entity}Service.cs` (inject `AppDbContext` + `IMapper` เป็นพื้นฐาน, เพิ่ม `ILoginDetailServices` ถ้าต้องข้อมูล user)
+2. Service Implementation — `Services/{Entity}/{Entity}Service.cs` (inject **`{DbContextClass}`** จากขั้นตอนที่ 0b + `IMapper` เป็นพื้นฐาน, เพิ่ม `ILoginDetailServices` ถ้าต้องข้อมูล user)
 3. DTOs — `DTOs/{Entity}/{Entity}TableDto.cs`, `{Entity}ResponseDto.cs`, `{Entity}RequestDto.cs`, `{Entity}FilterDto.cs` (ตาม naming convention ในไฟล์นั้น)
 4. AutoMapper entries — เพิ่มใน `AutoMapperProfile.cs`
 5. DI registration — เพิ่มใน `ProjectSetup.cs` ส่วน `ConfigDependency`

@@ -21,7 +21,7 @@ allowed-tools:
 - `{{command_prefix}}ssd git-commit` — เขียน commit message ตามมาตรฐาน
 - `{{command_prefix}}ssd python-review` — review Python code
 
-## คำสั่งที่มี (35 commands)
+## คำสั่งที่มี (37 commands)
 
 ### Frontend (React + TypeScript)
 
@@ -45,6 +45,8 @@ allowed-tools:
 | `dotnet-controller` | ASP.NET API controllers, routing, authorization |
 | `dotnet-service` | Service layer, DTO, AutoMapper |
 | `dotnet-infra` | Serilog logging, Quartz jobs, RestSharp HTTP clients |
+| `dotnet-scaffold` | EF Core Reverse Engineer ผ่าน CLI — dotnet ef dbcontext scaffold พร้อม SSD conventions |
+| `dotnet-ef-query` | EF Core query patterns — AsNoTracking, Include, pagination, transaction, async |
 | `database` | EF Core Reverse Engineer, database naming conventions |
 
 ### Python

@@ -38,6 +38,8 @@ const TECH_KEYWORDS = {
   'dotnet-controller': 'Controller',
   'dotnet-service':    'Service',
   'dotnet-infra':      'Serilog',
+  'dotnet-scaffold':   'dbcontext scaffold',
+  'dotnet-ef-query':   'AsNoTracking',
   'database':          'EF Core',
   'python-starter':    'FastAPI',
   'python-feature':    'StreamingResponse',

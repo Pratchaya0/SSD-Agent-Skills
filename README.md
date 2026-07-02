@@ -2,7 +2,7 @@
 
 คอลเลกชัน Agent Skills สำหรับทีมพัฒนาของ Smile Solution Development จาก SIAM SMILE WEB SPECIFICATION v2.0.1
 
-1 skill, 35 commands — React/TypeScript, .NET Core, Python, Git
+1 skill, 37 commands — React/TypeScript, .NET Core, Python, Git
 
 ## ติดตั้ง
 
@@ -43,7 +43,7 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 
 หรือพิมพ์ `/ssd` เพื่อดูรายการ commands ทั้งหมด
 
-## Commands ที่มี (35 commands)
+## Commands ที่มี (37 commands)
 
 ### เริ่มต้นโปรเจคใหม่
 
@@ -72,6 +72,8 @@ npx skills update          # อัปเดตทุก skill ที่ติ�
 | `/ssd dotnet-controller` | เขียน ASP.NET API Controller |
 | `/ssd dotnet-service` | เขียน Service, DTO, AutoMapper |
 | `/ssd dotnet-infra` | Logging (Serilog), Background jobs (Quartz), API client (RestSharp) |
+| `/ssd dotnet-scaffold` | EF Core Reverse Engineer ผ่าน CLI — รัน `dotnet ef dbcontext scaffold` ตาม SSD conventions |
+| `/ssd dotnet-ef-query` | EF Core query patterns — AsNoTracking, Include, pagination, transaction, async |
 | `/ssd database` | กำหนดชื่อ database objects, EF Core Reverse Engineer |
 
 ### Python
