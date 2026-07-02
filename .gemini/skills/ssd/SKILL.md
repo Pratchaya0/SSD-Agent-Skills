@@ -95,7 +95,7 @@ description: "มาตรฐานการพัฒนาซอฟต์แว
 1. **ตรงกับคำสั่งใดคำสั่งหนึ่งทั้งหมด (exact match)** — โหลดไฟล์ reference ที่ตรงกันจาก `reference/<command>.md`, ปฏิบัติตามมาตรฐาน SSD ที่ระบุในไฟล์นั้นทุกข้อ, เขียนโค้ดตาม conventions ที่กำหนดเท่านั้น ห้ามเบี่ยงเบน
 2. **ไม่ได้ระบุคำสั่ง หรือพิมพ์ `help` / `--help` / `-h` / `?` / `-?`** — แสดงรายการคำสั่งทั้งหมดข้างต้น (จัดกลุ่มตามหมวด) แล้วถามว่าต้องการใช้คำสั่งใด
 3. **พิมพ์ไม่ครบ/ไม่ตรงกับคำสั่งใดเลย (partial)** — แตกชื่อคำสั่งทั้งหมดด้วย `-` เป็น segment แล้วค้นหาคำสั่งที่มี segment ใด segment หนึ่ง "ขึ้นต้น" ด้วยข้อความที่พิมพ์ (prefix match ต่อ segment, ไม่สนตัวพิมพ์เล็ก/ใหญ่) ครอบคลุมทั้ง segment แรก (หมวด) และ segment ท้าย (keyword) เช่น:
-   - พิมพ์ `dotn` → ตรงกับ segment แรกของ `dotnet-controller`, `dotnet-service`, `dotnet-infra`
+   - พิมพ์ `dotn` → ตรงกับ segment แรกของ `dotnet-controller`, `dotnet-service`, `dotnet-infra`, `dotnet-scaffold`, `dotnet-ef-query` (5 คำสั่ง → แสดงเป็น plain text ห้ามใช้ AskUserQuestion)
    - พิมพ์ `doctor` → ตรงกับ segment ท้ายของ `frontend-doctor`, `backend-doctor`, `python-doctor`, `db-doctor`
    - พิมพ์ `review` → ตรงกับ segment ท้ายของ `frontend-review`, `backend-review`, `python-review`
    - **เจอ 1 คำสั่ง** — แนะนำคำสั่งนั้นทันที พร้อมคำอธิบายสั้นๆ และบรรทัด "ลองพิมพ์: `/ssd <command>`"
